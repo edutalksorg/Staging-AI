@@ -6,6 +6,7 @@ import Button from '../../components/Button';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleTheme, showToast } from '../../store/uiSlice';
 import { RootState } from '../../store';
+import { authService } from '../../services/auth';
 
 const AdminSettingsPage: React.FC = () => {
     const dispatch = useDispatch();
@@ -14,10 +15,58 @@ const AdminSettingsPage: React.FC = () => {
     const { user } = useSelector((state: RootState) => state.auth);
 
     const [loading, setLoading] = useState(false);
+    const [passwordLoading, setPasswordLoading] = useState(false);
     const [notifications, setNotifications] = useState({
         email: true,
         adminAlert: true,
     });
+
+    const [passwordForm, setPasswordForm] = useState({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+    });
+
+    const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setPasswordForm(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    const submitPasswordChange = async () => {
+        if (!passwordForm.currentPassword || !passwordForm.newPassword || !passwordForm.confirmPassword) {
+            dispatch(showToast({ message: 'Please fill in all password fields', type: 'error' }));
+            return;
+        }
+
+        if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+            dispatch(showToast({ message: 'New passwords do not match', type: 'error' }));
+            return;
+        }
+
+        setPasswordLoading(true);
+        try {
+            await authService.changePassword({
+                currentPassword: passwordForm.currentPassword,
+                newPassword: passwordForm.newPassword,
+                confirmPassword: passwordForm.confirmPassword
+            });
+            dispatch(showToast({ message: 'Password changed successfully', type: 'success' }));
+            setPasswordForm({
+                currentPassword: '',
+                newPassword: '',
+                confirmPassword: ''
+            });
+        } catch (error: any) {
+            console.error('Change password error:', error);
+            const message = error?.response?.data?.message || 'Failed to change password';
+            dispatch(showToast({ message, type: 'error' }));
+        } finally {
+            setPasswordLoading(false);
+        }
+    };
 
     const handleSave = async () => {
         setLoading(true);
@@ -123,15 +172,58 @@ const AdminSettingsPage: React.FC = () => {
                         </div>
 
                         <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
-                            <div className="flex justify-between items-center">
-                                <div>
-                                    <p className="font-medium text-slate-900 dark:text-white">Change Password</p>
-                                    <p className="text-sm text-slate-500">Last updated recently</p>
+                            <div className="space-y-4">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                            Current Password
+                                        </label>
+                                        <input
+                                            type="password"
+                                            name="currentPassword"
+                                            value={passwordForm.currentPassword}
+                                            onChange={handlePasswordChange}
+                                            className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            placeholder="Current password"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                            New Password
+                                        </label>
+                                        <input
+                                            type="password"
+                                            name="newPassword"
+                                            value={passwordForm.newPassword}
+                                            onChange={handlePasswordChange}
+                                            className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            placeholder="New password"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                            Confirm Password
+                                        </label>
+                                        <input
+                                            type="password"
+                                            name="confirmPassword"
+                                            value={passwordForm.confirmPassword}
+                                            onChange={handlePasswordChange}
+                                            className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            placeholder="Confirm new password"
+                                        />
+                                    </div>
                                 </div>
-
-                                <Button variant="outline">
-                                    Update
-                                </Button>
+                                <div className="flex justify-end">
+                                    <Button
+                                        onClick={submitPasswordChange}
+                                        isLoading={passwordLoading}
+                                        variant="outline"
+                                        className="mt-2"
+                                    >
+                                        Update Password
+                                    </Button>
+                                </div>
                             </div>
                         </div>
                     </div>

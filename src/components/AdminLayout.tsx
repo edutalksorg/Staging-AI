@@ -17,6 +17,7 @@ import {
 import type { RootState, AppDispatch } from '../store';
 import { logout } from '../store/authSlice';
 import { toggleTheme } from '../store/uiSlice';
+import { Logo } from './common/Logo';
 
 interface AdminLayoutProps {
     children: React.ReactNode;
@@ -59,18 +60,16 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     ];
 
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col">
-            <header className="bg-white dark:bg-slate-900 shadow-sm sticky top-0 z-50">
+        <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex flex-col">
+            <header className="bg-white dark:bg-slate-800 shadow-sm sticky top-0 z-50">
                 <nav className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
                     <div
                         className="flex items-center gap-2 cursor-pointer"
                         onClick={() => navigate('/admin')}
                     >
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center">
-                            <span className="text-white font-bold text-lg">E</span>
-                        </div>
+                        <Logo />
                         <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent hidden sm:block">
-                            EduTalks Admin
+                            Admin
                         </span>
                     </div>
 

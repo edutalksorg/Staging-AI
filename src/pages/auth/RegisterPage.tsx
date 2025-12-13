@@ -9,8 +9,9 @@ import { authService } from '../../services/auth';
 import { setAuthData, setError } from '../../store/authSlice';
 import { showToast } from '../../store/uiSlice';
 import { AppDispatch } from '../../store';
+import { Logo } from '../../components/common/Logo';
 
-// Small helper component to show instructor-only fields.
+// Helper component
 const InstructorExtraFields: React.FC<any> = ({ register, errors }) => {
   // Determine role from select value in DOM (simple but effective here)
   const role = (document.querySelector('select[name="role"]') as HTMLSelectElement)?.value || 'user';
@@ -200,7 +201,7 @@ const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="card">
           {/* Back to Home Button */}
@@ -216,14 +217,12 @@ const RegisterPage: React.FC = () => {
             >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
-            <span className="text-sm font-medium">Back to Home</span>
+            {/* <span className="text-sm font-medium">Back to Home</span> */}
           </Link>
 
           {/* Logo */}
           <div className="flex justify-center mb-8">
-            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-primary-600 to-secondary-600 flex items-center justify-center">
-              <span className="text-white font-bold text-xl">E</span>
-            </div>
+            <Logo className="scale-125" />
           </div>
 
           <h1 className="text-3xl font-bold text-center mb-2 text-slate-900 dark:text-white">

@@ -22,6 +22,7 @@ import OnlineStatusIndicator from './OnlineStatusIndicator';
 import TrialTimer from './TrialTimer';
 import { useUsageLimits } from '../hooks/useUsageLimits';
 import { LanguageSelector } from './common/LanguageSelector';
+import { Logo } from './common/Logo';
 
 interface UserLayoutProps {
     children: React.ReactNode;
@@ -80,17 +81,12 @@ const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col">
             {/* Header */}
-            <header className="sticky top-0 z-40 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+            <header className="sticky top-0 z-40 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16">
                         {/* Logo */}
-                        <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/dashboard')}>
-                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center">
-                                <span className="text-white font-bold text-lg">E</span>
-                            </div>
-                            <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent hidden sm:block">
-                                EduTalks
-                            </span>
+                        <div className="cursor-pointer" onClick={() => navigate('/dashboard')}>
+                            <Logo />
                         </div>
 
                         {/* Right Actions */}

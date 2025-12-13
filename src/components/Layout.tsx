@@ -19,6 +19,7 @@ import {
 import type { RootState, AppDispatch } from '../store';
 import { logout } from '../store/authSlice';
 import { toggleTheme } from '../store/uiSlice';
+import { Logo } from './common/Logo';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -106,9 +107,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <div className="h-full flex flex-col">
           {/* Logo */}
           <div className="h-16 flex items-center px-6 border-b border-slate-200 dark:border-slate-700 flex-shrink-0">
-            <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-              EduTalks
-            </span>
+            <Logo />
             <span className="ml-2 text-xs font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded-full">
               Student
             </span>
