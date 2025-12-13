@@ -21,6 +21,7 @@ import { toggleTheme } from '../store/uiSlice';
 import OnlineStatusIndicator from './OnlineStatusIndicator';
 import TrialTimer from './TrialTimer';
 import { useUsageLimits } from '../hooks/useUsageLimits';
+import { LanguageSelector } from './common/LanguageSelector';
 
 interface UserLayoutProps {
     children: React.ReactNode;
@@ -109,6 +110,9 @@ const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
                             >
                                 {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
                             </button>
+
+                            {/* Language Selector */}
+                            <LanguageSelector />
 
                             {/* Profile Dropdown */}
                             <div className="relative" ref={profileRef}>

@@ -2,9 +2,10 @@ import axios, { AxiosInstance, AxiosError, AxiosResponse } from 'axios';
 import { STORAGE_KEYS } from '../constants';
 
 const getBaseUrl = () => {
-  // In development, use the relative path to trigger the Vite proxy
+  // In development, use the direct absolute URL to bypass Vite proxy
+  // This ensures API requests share the same domain/cookies as the direct SignalR connection (Sticky Sessions)
   if (import.meta.env.DEV) {
-    return '/api';
+    return 'https://edutalks-backend.lemonfield-c795bfef.centralindia.azurecontainerapps.io/api/v1';
   }
 
   // In production, use the environment variable

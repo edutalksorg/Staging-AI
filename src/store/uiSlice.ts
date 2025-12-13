@@ -13,13 +13,18 @@ interface UIState {
     visible: boolean;
     data?: any;
   } | null;
+  language: string;
 }
+
+const DEFAULT_LANGUAGE = 'English';
+const LANGUAGE_KEY = 'edutalks_language';
 
 const initialState: UIState = {
   theme: (localStorage.getItem('edutalks_theme') as 'light' | 'dark') || 'light',
   sidebarOpen: true,
   toast: null,
   modal: null,
+  language: localStorage.getItem(LANGUAGE_KEY) || DEFAULT_LANGUAGE,
 };
 
 export const uiSlice = createSlice({
@@ -80,6 +85,10 @@ export const uiSlice = createSlice({
     hideModal: (state) => {
       state.modal = null;
     },
+    setLanguage: (state, action: PayloadAction<string>) => {
+      state.language = action.payload;
+      localStorage.setItem(LANGUAGE_KEY, action.payload);
+    },
   },
 });
 
@@ -92,6 +101,7 @@ export const {
   hideToast,
   showModal,
   hideModal,
+  setLanguage,
 } = uiSlice.actions;
 
 export default uiSlice.reducer;

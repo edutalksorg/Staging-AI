@@ -1,28 +1,38 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface VoiceCall {
-  id: string;
+  callId: string;
   callerId: string;
-  calleeId: string;
   callerName: string;
+  callerAvatar?: string;
+  calleeId: string;
   calleeName: string;
+  calleeAvatar?: string;
   topicId?: string;
-  status: 'initiated' | 'ringing' | 'accepted' | 'ongoing' | 'completed' | 'rejected' | 'missed';
-  duration?: number;
-  startedAt?: string;
+  topicTitle?: string;
+  status: 'initiated' | 'ringing' | 'accepted' | 'ongoing' | 'completed' | 'rejected' | 'missed' | 'failed';
+  initiatedAt: string;
+  acceptedAt?: string;
   endedAt?: string;
-  rating?: number;
-  notes?: string;
-  recordingUrl?: string;
+  durationSeconds?: number;
+  callQualityRating?: number;
 }
 
 export interface AvailableUser {
-  id: string;
-  name: string;
-  avatar?: string;
-  level: string;
-  topicsOfInterest?: string[];
-  isOnline: boolean;
+  userId: string;
+  fullName: string;
+  avatarUrl?: string;
+  preferredLanguage?: string;
+  status: 'Online' | 'Offline' | 'Busy';
+  lastActiveAt?: string;
+}
+
+export interface CallInvitationEvent {
+  callId: string;
+  callerName: string;
+  callerAvatar?: string;
+  timestamp: string;
+  expiresInSeconds: number;
 }
 
 interface CallState {
@@ -32,10 +42,19 @@ interface CallState {
   callHistory: VoiceCall[];
   isLoading: boolean;
   error: string | null;
+
+  // Connection State
+  signalRConnected: boolean;
+
+  // Active Call State
   isCallActive: boolean;
-  peerConnection: RTCPeerConnection | null;
-  localStream: MediaStream | null;
-  remoteStream: MediaStream | null;
+  callState: 'idle' | 'initiating' | 'ringing' | 'incoming' | 'connecting' | 'active' | 'ending';
+  incomingInvitation: CallInvitationEvent | null;
+
+  // Media State (Non-serializable refs should be managed outside Redux, but we track status here)
+  isMuted: boolean;
+  isVideoEnabled: boolean; // Future proofing
+  durationSeconds: number;
 }
 
 const initialState: CallState = {
@@ -45,10 +64,16 @@ const initialState: CallState = {
   callHistory: [],
   isLoading: false,
   error: null,
+
+  signalRConnected: false,
+
   isCallActive: false,
-  peerConnection: null,
-  localStream: null,
-  remoteStream: null,
+  callState: 'idle',
+  incomingInvitation: null,
+
+  isMuted: false,
+  isVideoEnabled: false,
+  durationSeconds: 0,
 };
 
 export const callSlice = createSlice({
@@ -61,42 +86,73 @@ export const callSlice = createSlice({
     setError: (state, action: PayloadAction<string | null>) => {
       state.error = action.payload;
     },
+    setSignalRConnected: (state, action: PayloadAction<boolean>) => {
+      state.signalRConnected = action.payload;
+    },
     setAvailableUsers: (state, action: PayloadAction<AvailableUser[]>) => {
       state.availableUsers = action.payload;
     },
-    setCurrentCall: (state, action: PayloadAction<VoiceCall | null>) => {
+
+    // Call Lifecycle
+    initiateCall: (state, action: PayloadAction<VoiceCall>) => {
       state.currentCall = action.payload;
+      state.callState = 'initiating';
+      state.error = null;
+    },
+    setIncomingInvitation: (state, action: PayloadAction<CallInvitationEvent>) => {
+      state.incomingInvitation = action.payload;
+      state.callState = 'incoming';
+    },
+    clearIncomingInvitation: (state) => {
+      state.incomingInvitation = null;
+      if (state.callState === 'incoming') {
+        state.callState = 'idle';
+      }
+    },
+    acceptCall: (state, action: PayloadAction<VoiceCall>) => {
+      state.currentCall = action.payload;
+      state.callState = 'connecting';
+      state.incomingInvitation = null;
+    },
+    setCallStatus: (state, action: PayloadAction<CallState['callState']>) => {
+      state.callState = action.payload;
+      if (action.payload === 'active') {
+        state.isCallActive = true;
+      }
     },
     updateCurrentCall: (state, action: PayloadAction<Partial<VoiceCall>>) => {
       if (state.currentCall) {
         state.currentCall = { ...state.currentCall, ...action.payload };
       }
     },
-    setCallActive: (state, action: PayloadAction<boolean>) => {
-      state.isCallActive = action.payload;
+
+    // Call Controls
+    toggleMute: (state) => {
+      state.isMuted = !state.isMuted;
     },
-    addCallToHistory: (state, action: PayloadAction<VoiceCall>) => {
-      state.callHistory.unshift(action.payload);
-      state.calls.unshift(action.payload);
+    setMuted: (state, action: PayloadAction<boolean>) => {
+      state.isMuted = action.payload;
     },
-    setCallHistory: (state, action: PayloadAction<VoiceCall[]>) => {
-      state.callHistory = action.payload;
+    updateDuration: (state, action: PayloadAction<number>) => {
+      state.durationSeconds = action.payload;
     },
-    setLocalStream: (state, action: PayloadAction<MediaStream | null>) => {
-      state.localStream = action.payload;
-    },
-    setRemoteStream: (state, action: PayloadAction<MediaStream | null>) => {
-      state.remoteStream = action.payload;
-    },
-    setPeerConnection: (state, action: PayloadAction<RTCPeerConnection | null>) => {
-      state.peerConnection = action.payload;
-    },
+
+    // Cleanup
     endCall: (state) => {
       state.currentCall = null;
       state.isCallActive = false;
-      state.peerConnection = null;
-      state.localStream = null;
-      state.remoteStream = null;
+      state.callState = 'idle';
+      state.incomingInvitation = null;
+      state.durationSeconds = 0;
+      state.isMuted = false;
+    },
+
+    // History
+    addCallToHistory: (state, action: PayloadAction<VoiceCall>) => {
+      state.callHistory.unshift(action.payload);
+    },
+    setCallHistory: (state, action: PayloadAction<VoiceCall[]>) => {
+      state.callHistory = action.payload;
     },
   },
 });
@@ -104,16 +160,20 @@ export const callSlice = createSlice({
 export const {
   setLoading,
   setError,
+  setSignalRConnected,
   setAvailableUsers,
-  setCurrentCall,
+  initiateCall,
+  setIncomingInvitation,
+  clearIncomingInvitation,
+  acceptCall,
+  setCallStatus,
   updateCurrentCall,
-  setCallActive,
+  toggleMute,
+  setMuted,
+  updateDuration,
+  endCall,
   addCallToHistory,
   setCallHistory,
-  setLocalStream,
-  setRemoteStream,
-  setPeerConnection,
-  endCall,
 } = callSlice.actions;
 
 export default callSlice.reducer;

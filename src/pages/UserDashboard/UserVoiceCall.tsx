@@ -45,6 +45,15 @@ const UserVoiceCall: React.FC = () => {
         }
     }, [activeTab]);
 
+    // Set initial status to Online when visiting this page
+    useEffect(() => {
+        callsService.updateAvailability('Online').catch(console.error);
+        return () => {
+            // Optional: Set to offline on unmount if desired, but usually we keep them online 
+            // until they logout or disconnect.
+        };
+    }, []);
+
     const fetchAvailableUsers = async () => {
         try {
             setLoading(true);
@@ -101,13 +110,26 @@ const UserVoiceCall: React.FC = () => {
 
         try {
             dispatch(showToast({ message: 'Initiating call...', type: 'info' }));
-            const res = await callsService.initiate({ calleeId: userId });
+            // Pass topicId as null (casted) to satisfy backend if it expects a valid guid or null
+            const res = await callsService.initiate({ calleeId: userId, topicId: null as any });
             // Assuming successful initiation redirects to call room or shows overlay
             // For now, redirect to the main voice calls page which handles the room
             navigate('/voice-calls');
-        } catch (error) {
+        } catch (error: any) {
             console.error('Failed to initiate call:', error);
-            dispatch(showToast({ message: 'Failed to start call. User might be busy.', type: 'error' }));
+            // Log detailed backend error
+            if (error.response) {
+                console.error('Backend Error Response:', error.response.data);
+                const backendMsg = error.response.data?.message || (typeof error.response.data === 'string' ? error.response.data : '');
+                const validationErrors = error.response.data?.errors ? JSON.stringify(error.response.data.errors) : '';
+
+                dispatch(showToast({
+                    message: `Failed: ${backendMsg} ${validationErrors}`.trim() || 'Failed to start call (400 Bad Request)',
+                    type: 'error'
+                }));
+            } else {
+                dispatch(showToast({ message: 'Failed to start call. User might be busy.', type: 'error' }));
+            }
         }
     };
 
@@ -203,7 +225,15 @@ const UserVoiceCall: React.FC = () => {
                                 <select
                                     className="appearance-none bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white py-1.5 pl-8 pr-8 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer text-sm font-medium shadow-sm transition-colors hover:border-blue-400"
                                     value={userStatus}
-                                    onChange={(e) => setUserStatus(e.target.value)}
+                                    onChange={(e) => {
+                                        const newStatus = e.target.value;
+                                        setUserStatus(newStatus);
+                                        // Sync with backend
+                                        if (newStatus === 'online' || newStatus === 'offline') {
+                                            callsService.updateAvailability(newStatus === 'online' ? 'Online' : 'Offline')
+                                                .catch(err => console.error('Failed to update availability', err));
+                                        }
+                                    }}
                                 >
                                     <option value="online">Online</option>
                                     <option value="offline">Offline</option>

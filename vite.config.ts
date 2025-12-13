@@ -31,6 +31,11 @@ export default defineConfig({
         target: 'https://edutalks-backend.lemonfield-c795bfef.centralindia.azurecontainerapps.io',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '/api/v1'),
+      },
+      '/hubs': {
+        target: 'https://edutalks-backend.lemonfield-c795bfef.centralindia.azurecontainerapps.io',
+        changeOrigin: true,
+        ws: true
       }
     }
   }

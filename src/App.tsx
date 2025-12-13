@@ -56,6 +56,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Toast from './components/Toast';
 import { RootState } from './store';
 import { setTheme } from './store/uiSlice';
+import CallManager from './components/voice-call/CallManager';
+import { LanguagePopup } from './components/common/LanguagePopup';
 
 /**
  * Smart Dashboard Router - Routes based on user role
@@ -586,11 +588,14 @@ function App() {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
 
+      {/* Voice Call Manager - Global */}
+      <CallManager />
+
       {/* Toast Notifications */}
+      <LanguagePopup />
       <Toast />
     </Router >
   );
 }
 
 export default App;
-
