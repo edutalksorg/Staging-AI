@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Menu,
   X,
@@ -29,11 +29,15 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useSelector((state: RootState) => state.auth);
   const { theme } = useSelector((state: RootState) => state.ui);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement | null>(null);
+
+  // Check if we should hide the sidebar (e.g. for Instructor Profile)
+  const shouldHideSidebar = location.pathname === '/instructor/profile';
 
   const handleLogout = () => {
     dispatch(logout());
@@ -61,6 +65,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     };
   }, [profileOpen]);
 
+  // Sidebar Logic
   const menuItems = [
     { icon: <Home size={20} />, label: 'Dashboard', path: '/dashboard' },
     { icon: <BookOpen size={20} />, label: 'Topics', path: '/dashboard?tab=topics' },
@@ -71,14 +76,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { icon: <Settings size={20} />, label: 'Settings', path: '/settings' },
   ];
 
-  // If user is instructor or admin, they shouldn't be using this layout normally?
-  // Actually Layout is generic. But if role is instructor/admin, maybe we should show nothing or limited?
-  // The user mainly uses this for the Student dashboard.
-  // I will only render this sidebar if NOT instructor/admin, OR if they are viewing student pages?
-  // The user asked "in user also align...".
-  // I'll render the sidebar.
-
-  // Helper for active link checking that handles query params
   const isActiveLink = (path: string, currentPath: string, currentSearch: string) => {
     if (path.includes('?')) {
       const [base, query] = path.split('?');
@@ -90,7 +87,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div className="h-screen bg-slate-50 dark:bg-slate-950 flex overflow-hidden">
       {/* Mobile Sidebar Overlay */}
-      {sidebarOpen && (
+      {sidebarOpen && !shouldHideSidebar && (
         <div
           className="fixed inset-0 bg-black/50 z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
@@ -98,83 +95,88 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       )}
 
       {/* Sidebar */}
-      <aside
-        className={`
-          fixed top-0 left-0 z-50 h-full w-72 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex-shrink-0
-          transform transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static
-          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-        `}
-      >
-        <div className="h-full flex flex-col">
-          {/* Logo */}
-          <div className="h-16 flex items-center px-6 border-b border-slate-200 dark:border-slate-700 flex-shrink-0">
-            <Logo />
-            <span className="ml-2 text-xs font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded-full">
-              Student
-            </span>
-          </div>
+      {!shouldHideSidebar && (
+        <aside
+          className={`
+            fixed top-0 left-0 z-50 h-full w-72 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex-shrink-0
+            transform transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static
+            ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+          `}
+        >
+          <div className="h-full flex flex-col">
+            {/* Logo */}
+            <div className="h-16 flex items-center px-6 border-b border-slate-200 dark:border-slate-700 flex-shrink-0">
+              <Logo />
+              <span className="ml-2 text-xs font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded-full">
+                Student
+              </span>
+            </div>
 
-          {/* Navigation */}
-          <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
-            {menuItems.map((item) => (
+            {/* Navigation */}
+            <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+              {menuItems.map((item) => (
+                <button
+                  key={item.path}
+                  onClick={() => {
+                    navigate(item.path);
+                    setSidebarOpen(false);
+                  }}
+                  className={`
+                    w-full flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 mx-2
+                    ${isActiveLink(item.path, location.pathname, location.search)
+                      ? 'bg-blue-600 text-white shadow-md shadow-blue-200 dark:shadow-blue-900/20'
+                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
+                    }
+                  `}
+                >
+                  {item.icon}
+                  {item.label}
+                </button>
+              ))}
+            </nav>
+
+            {/* User Profile & Logout */}
+            <div className="p-4 border-t border-slate-200 dark:border-slate-700 space-y-2 flex-shrink-0">
               <button
-                key={item.path}
-                onClick={() => {
-                  navigate(item.path);
-                  setSidebarOpen(false);
-                }}
-                className={`
-                  w-full flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 mx-2
-                  ${window.location.pathname + window.location.search === item.path || (item.path === '/dashboard' && window.location.pathname === '/dashboard' && !window.location.search)
-                    ? 'bg-blue-600 text-white shadow-md shadow-blue-200 dark:shadow-blue-900/20'
-                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
-                  }
-                `}
+                onClick={() => navigate('/dashboard?tab=profile')}
+                className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
-                {item.icon}
-                {item.label}
+                <img
+                  src={user?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.fullName || 'User')}`}
+                  alt="Profile"
+                  className="w-8 h-8 rounded-full bg-slate-200"
+                />
+                <div className="flex-1 min-w-0 text-left">
+                  <p className="truncate font-medium text-slate-900 dark:text-white">{user?.fullName}</p>
+                  <p className="truncate text-xs text-slate-500">View Profile</p>
+                </div>
               </button>
-            ))}
-          </nav>
 
-          {/* User Profile & Logout */}
-          <div className="p-4 border-t border-slate-200 dark:border-slate-700 space-y-2 flex-shrink-0">
-            <button
-              onClick={() => navigate('/dashboard?tab=profile')}
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-            >
-              <img
-                src={user?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.fullName || 'User')}`}
-                alt="Profile"
-                className="w-8 h-8 rounded-full bg-slate-200"
-              />
-              <div className="flex-1 min-w-0 text-left">
-                <p className="truncate font-medium text-slate-900 dark:text-white">{user?.fullName}</p>
-                <p className="truncate text-xs text-slate-500">View Profile</p>
-              </div>
-            </button>
-
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-            >
-              <LogOut size={20} />
-              Sign Out
-            </button>
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+              >
+                <LogOut size={20} />
+                Sign Out
+              </button>
+            </div>
           </div>
-        </div>
-      </aside>
+        </aside>
+      )}
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col h-full overflow-hidden">
         {/* Header */}
         <header className="h-16 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-4 lg:px-8 flex-shrink-0">
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="lg:hidden p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"
-          >
-            <Menu className="w-6 h-6 text-slate-600 dark:text-slate-400" />
-          </button>
+          {!shouldHideSidebar && (
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="lg:hidden p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"
+            >
+              <Menu className="w-6 h-6 text-slate-600 dark:text-slate-400" />
+            </button>
+          )}
+          {shouldHideSidebar && <div />} {/* Spacer if menu button is hidden */}
 
           <div className="flex items-center gap-4 ml-auto">
             <LanguageSelector />
