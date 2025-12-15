@@ -8,7 +8,7 @@ export interface User {
   role: 'user' | 'instructor' | 'admin';
   referralCode?: string;
   trialEndDate?: string;
-  subscriptionStatus?: 'trial' | 'active' | 'expired' | 'none';
+  subscriptionStatus?: 'trial' | 'active' | 'expired' | 'none' | 'cancelled';
   subscriptionPlan?: 'trial' | 'basic' | 'premium';
   isApproved?: boolean; // instructor approval flag
 }
