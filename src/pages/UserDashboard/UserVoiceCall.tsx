@@ -260,7 +260,7 @@ const UserVoiceCall: React.FC = () => {
     };
 
     return (
-        <div className="space-y-4 md:space-y-6 px-4 sm:px-0">
+        <div className="space-y-4 md:space-y-6">
             {/* Header with Session Timer */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 md:gap-4">
                 <h3 className="text-lg md:text-xl font-semibold text-slate-900 dark:text-white">

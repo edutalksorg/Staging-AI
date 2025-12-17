@@ -62,7 +62,7 @@ const UserCoupons: React.FC = () => {
     };
 
     return (
-        <div className="space-y-6 md:space-y-8 px-4 sm:px-0">
+        <div className="space-y-6 md:space-y-8">
             {/* Header / Validate Section */}
             <div className="bg-gradient-to-r from-pink-500 to-rose-500 rounded-xl md:rounded-2xl p-6 md:p-8 text-white shadow-lg overflow-hidden relative">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl"></div>

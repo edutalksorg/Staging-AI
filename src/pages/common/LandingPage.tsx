@@ -6,7 +6,7 @@ import { Logo } from '../../components/common/Logo';
 
 const LandingPage: React.FC = () => {
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-900">
+    <div className="min-h-dvh bg-white dark:bg-slate-900">
       {/* Navigation */}
       <nav className="sticky top-0 z-50 bg-white/80 dark:bg-slate-800/80 backdrop-blur-lg border-b border-slate-200 dark:border-slate-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">

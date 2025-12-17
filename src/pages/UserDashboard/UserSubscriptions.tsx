@@ -341,31 +341,12 @@ const UserSubscriptions: React.FC = () => {
 
     const handleConfirmSwitch = async () => {
         if (!pendingPlan) return;
-        setProcessingSwitch(true);
-        try {
-            // 1. Cancel current subscription
-            // Fix: Use subscriptionId from API response (fallback to id if needed)
-            const subIdToCancel = currentSub?.subscriptionId || currentSub?.id;
 
-            if (subIdToCancel) {
-                await subscriptionsService.cancel({
-                    subscriptionId: subIdToCancel,
-                    reason: `Switching to ${pendingPlan.name}`
-                });
-            } else if (['active', 'trialing'].includes(currentSub?.status?.toLowerCase())) {
-                console.warn("Could not find subscription ID to cancel, but status is active.");
-            }
+        // Close the modal
+        setSwitchModalOpen(false);
 
-            // 2. Subscribe to new plan
-            await processSubscription(pendingPlan);
-
-            setSwitchModalOpen(false);
-        } catch (error) {
-            console.error('Switch plan failed:', error);
-            dispatch(showToast({ message: 'Failed to switch plan. Please contact support.', type: 'error' }));
-        } finally {
-            setProcessingSwitch(false);
-        }
+        // Redirect to subscriptions page
+        navigate('/subscriptions');
     };
 
     // Coupon validation function
@@ -571,7 +552,7 @@ const UserSubscriptions: React.FC = () => {
     if (loading) return <div className="text-center py-12 text-slate-500">Loading plans...</div>;
 
     return (
-        <div className="space-y-4 md:space-y-6 lg:space-y-8 px-4 sm:px-0">
+        <div className="space-y-4 md:space-y-6 lg:space-y-8">
             {/* Header */}
             <div className="flex items-center gap-3 md:gap-4">
                 <button
@@ -718,89 +699,94 @@ const UserSubscriptions: React.FC = () => {
 
                                     return (
                                         <div className="mb-4 md:mb-6 border-t border-slate-200 dark:border-slate-700 pt-3 md:pt-4">
-                                            {!appliedCoupon ? (
+                                            {/* Hide coupon section for active/locked plans */}
+                                            {!isLocked && (
                                                 <>
-                                                    <button
-                                                        onClick={() => toggleCouponInput(planId)}
-                                                        className="text-xs md:text-sm text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1 md:gap-1.5 mb-2 min-h-[44px] md:min-h-0"
-                                                    >
-                                                        <Tag size={14} className="md:w-3.5 md:h-3.5" />
-                                                        {showInput ? 'Hide coupon' : 'Have a coupon code?'}
-                                                    </button>
-
-                                                    {showInput && (
-                                                        <div className="flex flex-col sm:flex-row gap-2 animate-in slide-in-from-top-2">
-                                                            <input
-                                                                type="text"
-                                                                placeholder="Enter code"
-                                                                value={couponCode}
-                                                                onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                                                                onKeyPress={(e) => {
-                                                                    if (e.key === 'Enter') {
-                                                                        validateAndApplyCoupon(plan, couponCode);
-                                                                    }
-                                                                }}
-                                                                className="flex-1 px-3 py-2.5 md:py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[44px] md:min-h-0"
-                                                            />
-                                                            <Button
-                                                                size="sm"
-                                                                onClick={() => validateAndApplyCoupon(plan, couponCode)}
-                                                                isLoading={isValidating}
-                                                                disabled={!couponCode.trim() || isValidating}
+                                                    {!appliedCoupon ? (
+                                                        <>
+                                                            <button
+                                                                onClick={() => toggleCouponInput(planId)}
+                                                                className="text-xs md:text-sm text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1 md:gap-1.5 mb-2 min-h-[44px] md:min-h-0"
                                                             >
-                                                                Apply
-                                                            </Button>
+                                                                <Tag size={14} className="md:w-3.5 md:h-3.5" />
+                                                                {showInput ? 'Hide coupon' : 'Have a coupon code?'}
+                                                            </button>
+
+                                                            {showInput && (
+                                                                <div className="flex flex-col sm:flex-row gap-2 animate-in slide-in-from-top-2">
+                                                                    <input
+                                                                        type="text"
+                                                                        placeholder="Enter code"
+                                                                        value={couponCode}
+                                                                        onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                                                                        onKeyPress={(e) => {
+                                                                            if (e.key === 'Enter') {
+                                                                                validateAndApplyCoupon(plan, couponCode);
+                                                                            }
+                                                                        }}
+                                                                        className="flex-1 px-3 py-2.5 md:py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[44px] md:min-h-0"
+                                                                    />
+                                                                    <Button
+                                                                        size="sm"
+                                                                        onClick={() => validateAndApplyCoupon(plan, couponCode)}
+                                                                        isLoading={isValidating}
+                                                                        disabled={!couponCode.trim() || isValidating}
+                                                                    >
+                                                                        Apply
+                                                                    </Button>
+                                                                </div>
+                                                            )}
+                                                        </>
+                                                    ) : (
+                                                        <div className="space-y-3">
+                                                            {/* Applied Coupon Badge */}
+                                                            <div className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                                                                <div className="flex items-center gap-2">
+                                                                    <div className="p-1.5 bg-green-100 dark:bg-green-900/40 rounded-full">
+                                                                        <Tag size={14} className="text-green-600 dark:text-green-400" />
+                                                                    </div>
+                                                                    <div>
+                                                                        <p className="text-sm font-semibold text-green-700 dark:text-green-300">
+                                                                            {appliedCoupon.code}
+                                                                        </p>
+                                                                        <p className="text-xs text-green-600 dark:text-green-400">
+                                                                            Coupon applied!
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                                <button
+                                                                    onClick={() => removeCoupon(planId)}
+                                                                    className="p-1.5 hover:bg-red-100 dark:hover:bg-red-900/40 rounded-full transition-colors"
+                                                                    title="Remove coupon"
+                                                                >
+                                                                    <X size={16} className="text-red-500" />
+                                                                </button>
+                                                            </div>
+
+                                                            {/* Price Breakdown */}
+                                                            <div className="space-y-2 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700">
+                                                                <div className="flex justify-between items-center text-sm">
+                                                                    <span className="text-slate-600 dark:text-slate-400">Original Price:</span>
+                                                                    <span className="text-slate-900 dark:text-white line-through">₹{plan.price}</span>
+                                                                </div>
+                                                                <div className="flex justify-between items-center text-sm">
+                                                                    <span className="text-green-600 dark:text-green-400">Discount:</span>
+                                                                    <span className="text-green-600 dark:text-green-400 font-semibold">
+                                                                        -{appliedCoupon.discountType === 'Percentage' || appliedCoupon.discountType === 1
+                                                                            ? `${appliedCoupon.discountValue}%`
+                                                                            : `₹${appliedCoupon.discountValue}`}
+                                                                    </span>
+                                                                </div>
+                                                                <div className="flex justify-between items-center pt-2 border-t border-slate-300 dark:border-slate-600">
+                                                                    <span className="font-bold text-slate-900 dark:text-white">Final Price:</span>
+                                                                    <span className="text-xl font-bold text-green-600 dark:text-green-400">
+                                                                        ₹{calculateFinalPrice(plan, appliedCoupon).toFixed(2)}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     )}
                                                 </>
-                                            ) : (
-                                                <div className="space-y-3">
-                                                    {/* Applied Coupon Badge */}
-                                                    <div className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
-                                                        <div className="flex items-center gap-2">
-                                                            <div className="p-1.5 bg-green-100 dark:bg-green-900/40 rounded-full">
-                                                                <Tag size={14} className="text-green-600 dark:text-green-400" />
-                                                            </div>
-                                                            <div>
-                                                                <p className="text-sm font-semibold text-green-700 dark:text-green-300">
-                                                                    {appliedCoupon.code}
-                                                                </p>
-                                                                <p className="text-xs text-green-600 dark:text-green-400">
-                                                                    Coupon applied!
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                        <button
-                                                            onClick={() => removeCoupon(planId)}
-                                                            className="p-1.5 hover:bg-red-100 dark:hover:bg-red-900/40 rounded-full transition-colors"
-                                                            title="Remove coupon"
-                                                        >
-                                                            <X size={16} className="text-red-500" />
-                                                        </button>
-                                                    </div>
-
-                                                    {/* Price Breakdown */}
-                                                    <div className="space-y-2 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700">
-                                                        <div className="flex justify-between items-center text-sm">
-                                                            <span className="text-slate-600 dark:text-slate-400">Original Price:</span>
-                                                            <span className="text-slate-900 dark:text-white line-through">₹{plan.price}</span>
-                                                        </div>
-                                                        <div className="flex justify-between items-center text-sm">
-                                                            <span className="text-green-600 dark:text-green-400">Discount:</span>
-                                                            <span className="text-green-600 dark:text-green-400 font-semibold">
-                                                                -{appliedCoupon.discountType === 'Percentage' || appliedCoupon.discountType === 1
-                                                                    ? `${appliedCoupon.discountValue}%`
-                                                                    : `₹${appliedCoupon.discountValue}`}
-                                                            </span>
-                                                        </div>
-                                                        <div className="flex justify-between items-center pt-2 border-t border-slate-300 dark:border-slate-600">
-                                                            <span className="font-bold text-slate-900 dark:text-white">Final Price:</span>
-                                                            <span className="text-xl font-bold text-green-600 dark:text-green-400">
-                                                                ₹{calculateFinalPrice(plan, appliedCoupon).toFixed(2)}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                </div>
                                             )}
                                         </div>
                                     );

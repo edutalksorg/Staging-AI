@@ -8,6 +8,8 @@
 
 html {
   scroll-behavior: smooth;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -15,7 +17,9 @@ body {
   font-family: 'Inter', system-ui, sans-serif;
   margin: 0;
   min-width: 320px;
-  min-height: 100vh;
+  min-height: 100dvh;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 /* Custom scrollbar */
@@ -37,6 +41,7 @@ body {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -47,6 +52,7 @@ body {
     transform: translateY(20px);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;
@@ -58,6 +64,7 @@ body {
     transform: translateY(-20px);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;
@@ -77,21 +84,33 @@ body {
 }
 
 /* Form styles */
-input, textarea, select {
+input,
+textarea,
+select {
   @apply transition-all duration-200;
+  font-size: 16px;
+  /* Prevent mobile zoom on iOS */
+  min-height: 44px;
+  /* Touch-friendly on mobile */
 }
 
-input:focus, textarea:focus, select:focus {
+input:focus,
+textarea:focus,
+select:focus {
   @apply outline-none ring-2 ring-primary-500;
 }
 
-input:disabled, textarea:disabled, select:disabled {
+input:disabled,
+textarea:disabled,
+select:disabled {
   @apply bg-slate-100 dark:bg-slate-800 cursor-not-allowed opacity-60;
 }
 
 /* Button styles */
 button {
   @apply transition-all duration-200;
+  min-height: 44px;
+  /* Touch-friendly on mobile */
 }
 
 button:disabled {
@@ -127,4 +146,3 @@ a {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
-

@@ -6,7 +6,27 @@ export default {
   ],
   darkMode: 'class',
   theme: {
+    screens: {
+      'xs': '320px',
+      'sm': '480px',
+      'md': '768px',
+      'lg': '1024px',
+      'xl': '1280px',
+      '2xl': '1536px',
+    },
     extend: {
+      height: {
+        'dvh': '100dvh',
+        'screen-dvh': '100dvh',
+      },
+      minHeight: {
+        'dvh': '100dvh',
+        'screen-dvh': '100dvh',
+      },
+      maxHeight: {
+        'dvh': '100dvh',
+        'screen-dvh': '100dvh',
+      },
       colors: {
         primary: {
           50: '#f0f9ff',

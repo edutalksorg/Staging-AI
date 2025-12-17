@@ -45,7 +45,7 @@ const DashboardCarousel: React.FC<DashboardCarouselProps> = ({
 
     return (
         <div
-            className="relative w-full overflow-hidden rounded-2xl shadow-xl group h-[280px] mb-6"
+            className="relative w-full max-w-full overflow-hidden rounded-xl md:rounded-2xl shadow-xl group h-[200px] sm:h-[240px] md:h-[280px] mb-6"
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
         >
@@ -65,16 +65,16 @@ const DashboardCarousel: React.FC<DashboardCarouselProps> = ({
                             className="w-full h-full object-cover"
                         />
                         {/* Gradient Overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent flex flex-col justify-end p-6 md:p-10">
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent flex flex-col justify-end p-4 sm:p-6 md:p-10">
                             <div className={`transform transition-all duration-700 delay-100 ${currentIndex === slides.findIndex(s => s.id === slide.id) ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-                                <h2 className="text-2xl md:text-3xl font-bold mb-2 text-white drop-shadow-md">
+                                <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold mb-1 md:mb-2 text-white drop-shadow-md">
                                     {slide.title}
                                 </h2>
-                                <p className="text-base md:text-lg text-slate-100 mb-4 max-w-2xl drop-shadow-sm line-clamp-2">
+                                <p className="text-sm sm:text-base md:text-lg text-slate-100 mb-2 md:mb-4 max-w-2xl drop-shadow-sm line-clamp-2">
                                     {slide.description}
                                 </p>
                                 {slide.ctaText && (
-                                    <button className="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2 rounded-xl font-semibold transition-all hover:scale-105 shadow-lg flex items-center gap-2 text-sm">
+                                    <button className="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-1.5 md:px-6 md:py-2 rounded-lg md:rounded-xl font-semibold transition-all hover:scale-105 shadow-lg flex items-center gap-2 text-xs md:text-sm">
                                         {slide.ctaText}
                                         <ChevronRight size={16} />
                                     </button>
@@ -88,17 +88,17 @@ const DashboardCarousel: React.FC<DashboardCarouselProps> = ({
             {/* Navigation Buttons */}
             <button
                 onClick={prevSlide}
-                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white p-2 rounded-full backdrop-blur-md transition-all opacity-0 group-hover:opacity-100 shadow-lg border border-white/10"
+                className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white p-1.5 md:p-2 rounded-full backdrop-blur-md transition-all opacity-0 group-hover:opacity-100 shadow-lg border border-white/10"
                 aria-label="Previous slide"
             >
-                <ChevronLeft size={20} />
+                <ChevronLeft size={18} className="md:w-5 md:h-5" />
             </button>
             <button
                 onClick={nextSlide}
-                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white p-2 rounded-full backdrop-blur-md transition-all opacity-0 group-hover:opacity-100 shadow-lg border border-white/10"
+                className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white p-1.5 md:p-2 rounded-full backdrop-blur-md transition-all opacity-0 group-hover:opacity-100 shadow-lg border border-white/10"
                 aria-label="Next slide"
             >
-                <ChevronRight size={20} />
+                <ChevronRight size={18} className="md:w-5 md:h-5" />
             </button>
 
             {/* Indicators */}

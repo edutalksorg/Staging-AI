@@ -91,13 +91,13 @@ const InstructorDashboardPage: React.FC = () => {
 
     return (
         <InstructorLayout>
-            <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div className="min-h-dvh bg-slate-50 dark:bg-slate-950">
+                <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 md:py-6 lg:py-8">
                     {/* Welcome Section */}
-                    <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl p-8 text-white mb-8 shadow-lg">
+                    <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl p-4 md:p-6 lg:p-8 text-white mb-6 md:mb-8 shadow-lg">
                         <div className="flex items-center justify-between">
                             <div>
-                                <h1 className="text-3xl font-bold mb-2">
+                                <h1 className="text-xl md:text-2xl lg:text-3xl font-bold mb-2">
                                     Welcome back, {user?.fullName || 'Instructor'}! 👋
                                 </h1>
                                 <p className="text-indigo-100">
@@ -111,7 +111,7 @@ const InstructorDashboardPage: React.FC = () => {
                     </div>
 
                     {/* Statistics Cards */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mb-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
                         {statCards.map((stat) => {
                             const Icon = stat.icon;
                             return (

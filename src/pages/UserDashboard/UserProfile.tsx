@@ -415,7 +415,7 @@ const UserProfile: React.FC = () => {
     };
 
     return (
-        <div className="max-w-7xl mx-auto px-4 sm:px-0">
+        <div className="max-w-7xl mx-auto">
             {/* Header */}
             <div className="mb-6 md:mb-8 flex items-center gap-3 md:gap-4">
                 <button

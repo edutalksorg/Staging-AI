@@ -167,7 +167,7 @@ const UserQuizInterface: React.FC = () => {
     }
 
     return (
-        <div className="space-y-4 md:space-y-6 px-4 sm:px-0">
+        <div className="space-y-4 md:space-y-6">
             <div className="flex items-center justify-between">
                 <h3 className="text-lg md:text-xl font-semibold text-slate-900 dark:text-white">Quiz Path</h3>
             </div>

@@ -188,7 +188,7 @@ const UserWallet: React.FC = () => {
     };
 
     return (
-        <div className="space-y-4 md:space-y-6 px-4 sm:px-0">
+        <div className="space-y-4 md:space-y-6">
             {/* Header */}
             <div className="flex items-center gap-3 md:gap-4">
                 <button

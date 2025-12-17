@@ -159,7 +159,7 @@ const SuperAdminPage: React.FC = () => {
 
     return (
         <AdminLayout>
-            <div className="min-h-screen bg-white dark:bg-slate-950 p-6">
+            <div className="min-h-dvh bg-white dark:bg-slate-950 p-3 sm:p-4 md:p-6">
                 <div className="max-w-7xl mx-auto">
                     {/* Header */}
                     <div className="mb-8 flex items-center justify-between">
@@ -171,7 +171,7 @@ const SuperAdminPage: React.FC = () => {
                                 <ArrowLeft size={24} />
                             </button>
                             <div>
-                                <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-3">
+                                <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-3">
                                     <Shield className="text-red-600" size={40} />
                                     Super Admin Control Center
                                 </h1>
@@ -183,10 +183,10 @@ const SuperAdminPage: React.FC = () => {
                     </div>
 
                     {/* Tabs */}
-                    <div className="flex border-b border-slate-200 dark:border-slate-700 mb-8">
+                    <div className="flex border-b border-slate-200 dark:border-slate-700 mb-8 overflow-x-auto scrollbar-hide">
                         <button
                             onClick={() => setActiveTab('admins')}
-                            className={`px-6 py-3 font-medium text-sm transition-colors border-b-2 ${activeTab === 'admins'
+                            className={`px-4 md:px-6 py-3 font-medium text-sm transition-colors border-b-2 whitespace-nowrap min-h-[44px] ${activeTab === 'admins'
                                 ? 'border-blue-600 text-blue-600 dark:text-blue-400'
                                 : 'border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
                                 }`}
@@ -195,7 +195,7 @@ const SuperAdminPage: React.FC = () => {
                         </button>
                         <button
                             onClick={() => setActiveTab('features')}
-                            className={`px-6 py-3 font-medium text-sm transition-colors border-b-2 ${activeTab === 'features'
+                            className={`px-4 md:px-6 py-3 font-medium text-sm transition-colors border-b-2 whitespace-nowrap min-h-[44px] ${activeTab === 'features'
                                 ? 'border-blue-600 text-blue-600 dark:text-blue-400'
                                 : 'border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
                                 }`}
@@ -291,51 +291,53 @@ const SuperAdminPage: React.FC = () => {
                             )}
 
                             <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
-                                <table className="w-full">
-                                    <thead className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
-                                        <tr>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 dark:text-slate-300 uppercase tracking-wider">Name</th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 dark:text-slate-300 uppercase tracking-wider">Email</th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 dark:text-slate-300 uppercase tracking-wider">Responsibilities</th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 dark:text-slate-300 uppercase tracking-wider">Created At</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
-                                        {loading ? (
-                                            <tr><td colSpan={4} className="p-4 text-center">Loading...</td></tr>
-                                        ) : admins.length === 0 ? (
-                                            <tr><td colSpan={4} className="p-4 text-center">No admins found other than you.</td></tr>
-                                        ) : (
-                                            admins.map((admin) => (
-                                                <tr key={admin.id} className="hover:bg-slate-50 dark:hover:bg-slate-800 transition">
-                                                    <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">
-                                                        {admin.fullName}
-                                                    </td>
-                                                    <td className="px-6 py-4 text-slate-600 dark:text-slate-400">{admin.email}</td>
-                                                    <td className="px-6 py-4">
-                                                        <div className="flex flex-wrap gap-2">
-                                                            {admin.responsibilities?.map((resp: string) => (
-                                                                <span key={resp} className="px-2 py-0.5 rounded text-xs bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200 border border-blue-200 dark:border-blue-800">
-                                                                    {resp.replace('_', ' ')}
-                                                                </span>
-                                                            )) || <span className="text-slate-400 text-sm">Reviewing All</span>}
-                                                        </div>
-                                                    </td>
-                                                    <td className="px-6 py-4 text-slate-500 text-sm">
-                                                        {admin.createdAt ? new Date(admin.createdAt).toLocaleDateString() : '-'}
-                                                    </td>
-                                                </tr>
-                                            ))
-                                        )}
-                                    </tbody>
-                                </table>
+                                <div className="overflow-x-auto">
+                                    <table className="w-full min-w-[640px]">
+                                        <thead className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
+                                            <tr>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 dark:text-slate-300 uppercase tracking-wider">Name</th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 dark:text-slate-300 uppercase tracking-wider">Email</th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 dark:text-slate-300 uppercase tracking-wider">Responsibilities</th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 dark:text-slate-300 uppercase tracking-wider">Created At</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
+                                            {loading ? (
+                                                <tr><td colSpan={4} className="p-4 text-center">Loading...</td></tr>
+                                            ) : admins.length === 0 ? (
+                                                <tr><td colSpan={4} className="p-4 text-center">No admins found other than you.</td></tr>
+                                            ) : (
+                                                admins.map((admin) => (
+                                                    <tr key={admin.id} className="hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+                                                        <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">
+                                                            {admin.fullName}
+                                                        </td>
+                                                        <td className="px-6 py-4 text-slate-600 dark:text-slate-400">{admin.email}</td>
+                                                        <td className="px-6 py-4">
+                                                            <div className="flex flex-wrap gap-2">
+                                                                {admin.responsibilities?.map((resp: string) => (
+                                                                    <span key={resp} className="px-2 py-0.5 rounded text-xs bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200 border border-blue-200 dark:border-blue-800">
+                                                                        {resp.replace('_', ' ')}
+                                                                    </span>
+                                                                )) || <span className="text-slate-400 text-sm">Reviewing All</span>}
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-6 py-4 text-slate-500 text-sm">
+                                                            {admin.createdAt ? new Date(admin.createdAt).toLocaleDateString() : '-'}
+                                                        </td>
+                                                    </tr>
+                                                ))
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     )}
 
                     {/* Features Grid Tab */}
                     {activeTab === 'features' && (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-right-4 duration-300">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 animate-in fade-in slide-in-from-right-4 duration-300">
                             {features.map((feature, index) => (
                                 <div
                                     key={index}

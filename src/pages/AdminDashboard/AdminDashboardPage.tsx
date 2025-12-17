@@ -46,7 +46,7 @@ const AdminDashboardPage: React.FC = () => {
       const res = await adminService.getAllUsers(1000, 1);
       const responseData = (res as any)?.data || res;
       const allUsers = Array.isArray(responseData) ? responseData : responseData?.items || [];
-      
+
       setUsers(allUsers);
       calculateStats(allUsers);
       filterUsers(allUsers, 'all', '');
@@ -60,7 +60,7 @@ const AdminDashboardPage: React.FC = () => {
   const calculateStats = (userData: UserData[]) => {
     const instructors = userData.filter(u => String(u.role).toLowerCase().includes('instructor')).length;
     const learners = userData.filter(u => String(u.role).toLowerCase() === 'user').length;
-    
+
     setStats({
       total: userData.length,
       instructors,
@@ -112,16 +112,16 @@ const AdminDashboardPage: React.FC = () => {
 
   return (
     <AdminLayout>
-      <div className="min-h-screen bg-white dark:bg-slate-950 p-6">
+      <div className="min-h-dvh bg-white dark:bg-slate-950 p-3 sm:p-4 md:p-6">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-2">Admin Dashboard</h1>
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white mb-2">Admin Dashboard</h1>
             <p className="text-slate-600 dark:text-slate-400">Manage all users, instructors, and system settings</p>
           </div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900 dark:to-blue-800 p-6 rounded-lg border border-blue-200 dark:border-blue-700">
               <div className="flex items-center justify-between">
                 <div>
@@ -179,31 +179,28 @@ const AdminDashboardPage: React.FC = () => {
               <div className="flex gap-2 flex-wrap">
                 <button
                   onClick={() => handleFilterChange('all')}
-                  className={`px-4 py-2 rounded-lg font-medium transition ${
-                    filterRole === 'all'
+                  className={`px-3 md:px-4 py-2 md:py-2 rounded-lg font-medium transition min-h-[44px] ${filterRole === 'all'
                       ? 'bg-blue-500 text-white'
                       : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600'
-                  }`}
+                    }`}
                 >
                   All Users ({users.length})
                 </button>
                 <button
                   onClick={() => handleFilterChange('instructor')}
-                  className={`px-4 py-2 rounded-lg font-medium transition ${
-                    filterRole === 'instructor'
+                  className={`px-3 md:px-4 py-2 md:py-2 rounded-lg font-medium transition min-h-[44px] ${filterRole === 'instructor'
                       ? 'bg-green-500 text-white'
                       : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600'
-                  }`}
+                    }`}
                 >
                   Instructors ({stats.instructors})
                 </button>
                 <button
                   onClick={() => handleFilterChange('user')}
-                  className={`px-4 py-2 rounded-lg font-medium transition ${
-                    filterRole === 'user'
+                  className={`px-3 md:px-4 py-2 md:py-2 rounded-lg font-medium transition min-h-[44px] ${filterRole === 'user'
                       ? 'bg-purple-500 text-white'
                       : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600'
-                  }`}
+                    }`}
                 >
                   Learners ({stats.learners})
                 </button>
@@ -225,7 +222,7 @@ const AdminDashboardPage: React.FC = () => {
                   <span className="ml-3 text-slate-600 dark:text-slate-400">No users found</span>
                 </div>
               ) : (
-                <table className="w-full">
+                <table className="w-full min-w-[640px]">
                   <thead className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 dark:text-slate-300 uppercase tracking-wider">Name</th>
@@ -252,11 +249,10 @@ const AdminDashboardPage: React.FC = () => {
                         <td className="px-6 py-4 text-slate-600 dark:text-slate-400 text-sm">{userData.email}</td>
                         <td className="px-6 py-4 text-slate-600 dark:text-slate-400 text-sm">{userData.phoneNumber || '-'}</td>
                         <td className="px-6 py-4">
-                          <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
-                            String(userData.role).toLowerCase().includes('instructor')
+                          <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${String(userData.role).toLowerCase().includes('instructor')
                               ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200'
                               : 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200'
-                          }`}>
+                            }`}>
                             {String(userData.role).toLowerCase().includes('instructor') ? 'Instructor' : 'Learner'}
                           </span>
                         </td>
@@ -281,7 +277,7 @@ const AdminDashboardPage: React.FC = () => {
                               setSelectedUser(userData);
                               setShowDetails(true);
                             }}
-                            className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-800 text-sm font-medium transition"
+                            className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-800 text-sm font-medium transition min-h-[44px]"
                           >
                             <Eye size={16} /> Details
                           </button>
@@ -297,7 +293,7 @@ const AdminDashboardPage: React.FC = () => {
           {/* User Details Modal */}
           {showDetails && selectedUser && (
             <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center z-50 p-4">
-              <div className="bg-white dark:bg-slate-900 rounded-lg max-w-lg w-full border border-slate-200 dark:border-slate-700">
+              <div className="bg-white dark:bg-slate-900 rounded-lg max-w-lg w-full border border-slate-200 dark:border-slate-700 max-h-[90vh] overflow-y-auto">
                 <div className="p-6">
                   <div className="flex items-center justify-between mb-6">
                     <h2 className="text-2xl font-bold text-slate-900 dark:text-white">User Details</h2>

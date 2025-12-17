@@ -90,7 +90,7 @@ const UserPronunciation: React.FC = () => {
     };
 
     return (
-        <div className="space-y-4 md:space-y-6 px-4 sm:px-0">
+        <div className="space-y-4 md:space-y-6">
             <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg md:text-xl font-semibold text-slate-900 dark:text-white">AI Pronunciation Practice</h3>
                 <div className="text-sm text-slate-500">

@@ -59,7 +59,7 @@ const UserReferrals: React.FC = () => {
     if (loading) return <div className="text-center py-12 text-slate-500">Loading referral program...</div>;
 
     return (
-        <div className="space-y-6 md:space-y-8 px-4 sm:px-0">
+        <div className="space-y-6 md:space-y-8">
             {/* Header */}
             <div className="flex items-center gap-3 md:gap-4">
                 <button

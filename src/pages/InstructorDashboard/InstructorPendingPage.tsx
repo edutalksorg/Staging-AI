@@ -13,7 +13,7 @@ const InstructorPendingPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center p-4">
+        <div className="min-h-dvh bg-slate-50 dark:bg-slate-900 flex items-center justify-center p-4">
             <div className="max-w-md w-full bg-white dark:bg-slate-800 rounded-xl shadow-lg p-8 text-center">
                 <div className="w-20 h-20 bg-yellow-100 dark:bg-yellow-900/30 rounded-full flex items-center justify-center mx-auto mb-6 text-yellow-600 dark:text-yellow-400">
                     <Clock size={40} />

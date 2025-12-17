@@ -60,9 +60,9 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     ];
 
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex flex-col">
+        <div className="min-h-dvh bg-slate-50 dark:bg-slate-900 flex flex-col">
             <header className="bg-white dark:bg-slate-800 shadow-sm sticky top-0 z-50">
-                <nav className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+                <nav className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 h-14 md:h-16 flex items-center justify-between">
                     <div
                         className="flex items-center gap-2 cursor-pointer"
                         onClick={() => navigate('/admin')}
@@ -73,11 +73,11 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                         </span>
                     </div>
 
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2 md:gap-4">
                         <button
                             type="button"
                             onClick={() => dispatch(toggleTheme())}
-                            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"
+                            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg min-h-[44px] min-w-[44px] flex items-center justify-center"
                         >
                             {theme === 'dark' ? <Sun /> : <Moon />}
                         </button>
@@ -86,17 +86,17 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                             <button
                                 type="button"
                                 onClick={() => setProfileOpen(!profileOpen)}
-                                className="flex items-center gap-2 p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"
+                                className="flex items-center gap-2 p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg min-h-[44px] min-w-[44px]"
                             >
                                 <img
                                     src={user?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.fullName || 'Admin')}`}
                                     alt="Profile"
-                                    className="w-8 h-8 rounded-full"
+                                    className="w-9 h-9 md:w-10 md:h-10 rounded-full"
                                 />
                             </button>
 
                             {profileOpen && (
-                                <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-slate-800 rounded-xl shadow-lg">
+                                <div className="absolute right-0 mt-2 w-56 md:w-64 bg-white dark:bg-slate-800 rounded-xl shadow-lg">
                                     <div className="border-b px-4 py-3 dark:border-slate-700">
                                         <p className="font-semibold">{user?.fullName}</p>
                                         <p className="text-sm text-slate-500">{user?.email}</p>
@@ -106,7 +106,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                                         {menuItems.map((item) => (
                                             <button
                                                 key={item.path}
-                                                className="w-full px-4 py-2 flex items-center gap-3 hover:bg-slate-100 dark:hover:bg-slate-700"
+                                                className="w-full px-4 py-2 flex items-center gap-3 hover:bg-slate-100 dark:hover:bg-slate-700 min-h-[44px]"
                                                 onClick={() => {
                                                     navigate(item.path);
                                                     setProfileOpen(false);
@@ -120,7 +120,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
 
                                     <div className="border-t pt-2 dark:border-slate-700">
                                         <button
-                                            className="w-full flex items-center gap-3 px-4 py-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                                            className="w-full flex items-center gap-3 px-4 py-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 min-h-[44px]"
                                             onClick={handleLogout}
                                         >
                                             <LogOut size={18} />
@@ -135,7 +135,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             </header>
 
             <main className="flex-1">
-                <div className="max-w-7xl mx-auto p-6">{children}</div>
+                <div className="max-w-7xl mx-auto p-3 sm:p-4 md:p-6">{children}</div>
             </main>
         </div>
     );

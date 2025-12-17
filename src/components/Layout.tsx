@@ -85,7 +85,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   };
 
   return (
-    <div className="h-screen bg-slate-50 dark:bg-slate-950 flex overflow-hidden">
+    <div className="min-h-dvh bg-slate-50 dark:bg-slate-950 flex overflow-hidden">
       {/* Mobile Sidebar Overlay */}
       {sidebarOpen && !shouldHideSidebar && (
         <div
@@ -98,14 +98,14 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       {!shouldHideSidebar && (
         <aside
           className={`
-            fixed top-0 left-0 z-50 h-full w-72 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex-shrink-0
-            transform transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static
+            fixed top-0 left-0 z-50 h-full w-full md:w-64 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex-shrink-0
+            transform transition-transform duration-200 ease-in-out md:translate-x-0 md:static
             ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
           `}
         >
           <div className="h-full flex flex-col">
             {/* Logo */}
-            <div className="h-16 flex items-center px-6 border-b border-slate-200 dark:border-slate-700 flex-shrink-0">
+            <div className="h-14 md:h-16 flex items-center px-4 md:px-6 border-b border-slate-200 dark:border-slate-700 flex-shrink-0">
               <Logo />
               <span className="ml-2 text-xs font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded-full">
                 Student
@@ -122,7 +122,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     setSidebarOpen(false);
                   }}
                   className={`
-                    w-full flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 mx-2
+                    w-full flex items-center gap-3 md:gap-4 px-3 md:px-4 py-3 md:py-3 rounded-xl text-sm font-medium transition-all duration-200 mx-0 md:mx-2 min-h-[44px]
                     ${isActiveLink(item.path, location.pathname, location.search)
                       ? 'bg-blue-600 text-white shadow-md shadow-blue-200 dark:shadow-blue-900/20'
                       : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
@@ -167,22 +167,22 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col h-full overflow-hidden">
         {/* Header */}
-        <header className="h-16 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-4 lg:px-8 flex-shrink-0">
+        <header className="h-14 md:h-16 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-4 md:px-6 lg:px-8 flex-shrink-0">
           {!shouldHideSidebar && (
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="lg:hidden p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"
+              className="md:hidden p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg min-h-[44px] min-w-[44px] flex items-center justify-center"
             >
               <Menu className="w-6 h-6 text-slate-600 dark:text-slate-400" />
             </button>
           )}
           {shouldHideSidebar && <div />} {/* Spacer if menu button is hidden */}
 
-          <div className="flex items-center gap-4 ml-auto">
+          <div className="flex items-center gap-2 md:gap-4 ml-auto">
             <LanguageSelector />
             <button
               onClick={() => dispatch(toggleTheme())}
-              className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+              className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
             >
               {theme === 'dark' ? (
                 <Sun className="w-5 h-5 text-slate-600 dark:text-slate-400" />
@@ -193,7 +193,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto p-4 lg:p-8">
+        <main className="flex-1 overflow-y-auto p-3 md:p-4 lg:p-8">
           {children}
         </main>
       </div>

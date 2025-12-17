@@ -88,18 +88,18 @@ const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
     ];
 
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col">
+        <div className="min-h-dvh bg-slate-50 dark:bg-slate-950 flex flex-col">
             {/* Header */}
             <header className="sticky top-0 z-40 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex items-center justify-between h-16">
+                <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
+                    <div className="flex items-center justify-between h-14 md:h-16">
                         {/* Logo */}
                         <div className="cursor-pointer" onClick={() => navigate('/dashboard')}>
                             <Logo />
                         </div>
 
                         {/* Right Actions */}
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2 md:gap-4">
                             {/* Trial/Plan Status */}
                             {isExplicitlyCancelled ? (
                                 <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-full animate-pulse">
@@ -127,7 +127,7 @@ const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
                             {/* Theme Toggle */}
                             <button
                                 onClick={() => dispatch(toggleTheme())}
-                                className="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"
+                                className="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
                                 aria-label="Toggle theme"
                             >
                                 {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
@@ -140,20 +140,20 @@ const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
                             <div className="relative" ref={profileRef}>
                                 <button
                                     onClick={() => setProfileOpen(!profileOpen)}
-                                    className="flex items-center gap-2 focus:outline-none relative"
+                                    className="flex items-center gap-2 focus:outline-none relative min-h-[44px] min-w-[44px]"
                                 >
                                     <div className="relative">
                                         <img
                                             src={user?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.fullName || 'User')}`}
                                             alt="Profile"
-                                            className="w-8 h-8 rounded-full border border-slate-200 dark:border-slate-700"
+                                            className="w-9 h-9 md:w-10 md:h-10 rounded-full border border-slate-200 dark:border-slate-700"
                                         />
                                         <OnlineStatusIndicator />
                                     </div>
                                 </button>
 
                                 {profileOpen && (
-                                    <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl py-2 z-50">
+                                    <div className="absolute right-0 mt-2 w-56 md:w-64 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl py-2 z-50">
                                         <div className="px-4 py-3 border-b border-slate-200 dark:border-slate-800 mb-2">
                                             <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">
                                                 {user?.fullName}
@@ -171,7 +171,7 @@ const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
                                                         setProfileOpen(false);
                                                         navigate(item.path);
                                                     }}
-                                                    className="w-full text-left flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                                                    className="w-full text-left flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors min-h-[44px]"
                                                 >
                                                     {item.icon}
                                                     {item.label}
@@ -182,7 +182,7 @@ const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
                                         <div className="mt-2 border-t border-slate-200 dark:border-slate-800 pt-2">
                                             <button
                                                 onClick={() => { setProfileOpen(false); handleLogout(); }}
-                                                className="w-full text-left flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors"
+                                                className="w-full text-left flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors min-h-[44px]"
                                             >
                                                 <LogOut size={18} />
                                                 Sign Out
@@ -197,7 +197,7 @@ const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
             </header>
 
             {/* Main Content */}
-            <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <main className="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 md:py-6 lg:py-8 overflow-x-hidden">
                 {children}
             </main>
         </div>

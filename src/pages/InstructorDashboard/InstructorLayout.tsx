@@ -46,11 +46,11 @@ const InstructorLayout: React.FC<InstructorLayoutProps> = ({ children }) => {
     ];
 
     return (
-        <div className="h-screen bg-slate-50 dark:bg-slate-900 flex overflow-hidden">
+        <div className="min-h-dvh bg-slate-50 dark:bg-slate-900 flex overflow-hidden">
             {/* Mobile Sidebar Overlay */}
             {sidebarOpen && (
                 <div
-                    className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+                    className="fixed inset-0 bg-black/50 z-40 md:hidden"
                     onClick={() => setSidebarOpen(false)}
                 />
             )}
@@ -58,14 +58,14 @@ const InstructorLayout: React.FC<InstructorLayoutProps> = ({ children }) => {
             {/* Sidebar */}
             <aside
                 className={`
-          fixed top-0 left-0 z-50 h-full w-72 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex-shrink-0
-          transform transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static
+          fixed top-0 left-0 z-50 h-full w-full md:w-64 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex-shrink-0
+          transform transition-transform duration-200 ease-in-out md:translate-x-0 md:static
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
         `}
             >
                 <div className="h-full flex flex-col">
                     {/* Logo */}
-                    <div className="h-16 flex items-center px-6 border-b border-slate-200 dark:border-slate-700 flex-shrink-0">
+                    <div className="h-14 md:h-16 flex items-center px-4 md:px-6 border-b border-slate-200 dark:border-slate-700 flex-shrink-0">
                         <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                             EduTalks
                         </span>
@@ -81,7 +81,7 @@ const InstructorLayout: React.FC<InstructorLayoutProps> = ({ children }) => {
                                 key={item.path}
                                 to={item.path}
                                 className={({ isActive }) => `
-                  flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 mx-2
+                  flex items-center gap-3 md:gap-4 px-3 md:px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 mx-0 md:mx-2 min-h-[44px]
                   ${isActive
                                         ? 'bg-blue-600 text-white shadow-md shadow-blue-200 dark:shadow-blue-900/20'
                                         : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
@@ -126,16 +126,16 @@ const InstructorLayout: React.FC<InstructorLayoutProps> = ({ children }) => {
             {/* Main Content */}
             <div className="flex-1 flex flex-col h-full overflow-hidden">
                 {/* Top Header */}
-                <header className="h-16 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between px-4 lg:px-8 flex-shrink-0">
+                <header className="h-14 md:h-16 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between px-4 md:px-6 lg:px-8 flex-shrink-0">
                     <button
                         onClick={() => setSidebarOpen(true)}
-                        className="lg:hidden p-2 rounded-md text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"
+                        className="md:hidden p-2 rounded-md text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 min-h-[44px] min-w-[44px] flex items-center justify-center"
                     >
                         <Menu size={24} />
                     </button>
 
                     <div className="flex items-center gap-4 ml-auto">
-                        <button className="p-2 rounded-full text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 relative">
+                        <button className="p-2 rounded-full text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 relative min-h-[44px] min-w-[44px] flex items-center justify-center">
                             <Bell size={20} />
                             <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span>
                         </button>
@@ -143,7 +143,7 @@ const InstructorLayout: React.FC<InstructorLayoutProps> = ({ children }) => {
                 </header>
 
                 {/* Page Content */}
-                <main className="flex-1 overflow-y-auto p-4 lg:p-8">
+                <main className="flex-1 overflow-y-auto p-3 md:p-4 lg:p-8">
                     {children}
                 </main>
             </div>
