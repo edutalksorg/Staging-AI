@@ -104,8 +104,8 @@ const DashboardRouter: React.FC = () => {
     console.log('[DashboardRouter] Displaying DashboardPage (Learner)');
     return <DashboardPage />;
   } else if (userRole === 'admin') {
-    console.log('[DashboardRouter] Admin user redirecting to /admin');
-    return <Navigate to="/admin" replace />;
+    console.log('[DashboardRouter] Admin user redirecting to /admindashboard');
+    return <Navigate to="/admindashboard" replace />;
   } else {
     console.warn(`[DashboardRouter] Unknown role: "${userRole}", showing learner dashboard`);
     return <DashboardPage />;
@@ -145,7 +145,7 @@ const RoleBasedRoute: React.FC<RoleBasedRouteProps> = ({ allowedRoles, children 
     } else if (userRole === 'superadmin') {
       return <Navigate to="/super-admin" replace />;
     } else if (userRole === 'admin') {
-      return <Navigate to="/admin" replace />;
+      return <Navigate to="/admindashboard" replace />;
     } else {
       return <Navigate to="/dashboard" replace />;
     }
@@ -255,7 +255,7 @@ function App() {
 
         {/* Admin Routes - Restricted to admin role */}
         <Route
-          path="/admin"
+          path="/admindashboard"
           element={
             <ProtectedRoute>
               <RoleBasedRoute allowedRoles={['admin']}>

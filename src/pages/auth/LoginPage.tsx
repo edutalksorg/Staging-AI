@@ -162,7 +162,7 @@ const LoginPage: React.FC = () => {
         // Redirect based on role
         const roleLower = String(finalUser.role || '').toLowerCase();
         if (roleLower === 'admin') {
-          navigate('/admin');
+          navigate('/admindashboard');
         } else if (finalUser.role === 'instructor') {
           navigate('/instructor-dashboard');
         } else {
