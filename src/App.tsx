@@ -21,6 +21,10 @@ import AdminSettingsPage from './pages/AdminDashboard/AdminSettingsPage';
 import AdminCouponsPage from './pages/AdminDashboard/AdminCouponsPage';
 import AdminSubscriptionsPage from './pages/AdminDashboard/AdminSubscriptionsPage';
 import SuperAdminPage from './pages/AdminDashboard/SuperAdminPage';
+import SuperAdminDashboardPage from './pages/SuperAdminDashboard/SuperAdminDashboardPage';
+import PermissionManagementPage from './pages/SuperAdminDashboard/PermissionManagementPage';
+import RoleManagementPage from './pages/SuperAdminDashboard/RoleManagementPage';
+import AdminManagementPage from './pages/SuperAdminDashboard/AdminManagementPage';
 import DashboardPage from './pages/UserDashboard/DashboardPage';
 import ProfilePage from './pages/UserDashboard/ProfilePage';
 import InstructorProfilePage from './pages/InstructorDashboard/InstructorProfilePage';
@@ -91,6 +95,9 @@ const DashboardRouter: React.FC = () => {
   if (userRole === 'instructor') {
     console.log('[DashboardRouter] Redirecting to Instructor Dashboard');
     return <Navigate to="/instructor-dashboard" replace />;
+  } else if (userRole === 'superadmin') {
+    console.log('[DashboardRouter] Redirecting to Super Admin Dashboard');
+    return <Navigate to="/super-admin" replace />;
   } else if (userRole === 'user' || userRole === 'learner') {
     console.log('[DashboardRouter] Displaying DashboardPage (Learner)');
     return <DashboardPage />;
@@ -108,7 +115,7 @@ const DashboardRouter: React.FC = () => {
  * Ensures only users with specific roles can access a page
  */
 interface RoleBasedRouteProps {
-  allowedRoles: ('user' | 'instructor' | 'admin' | 'learner' | 'image_user')[];
+  allowedRoles: ('user' | 'instructor' | 'admin' | 'learner' | 'image_user' | 'superadmin')[];
   children: React.ReactNode;
 }
 
@@ -133,6 +140,8 @@ const RoleBasedRoute: React.FC<RoleBasedRouteProps> = ({ allowedRoles, children 
     // Redirect to appropriate dashboard
     if (userRole === 'instructor') {
       return <Navigate to="/instructor-dashboard" replace />;
+    } else if (userRole === 'superadmin') {
+      return <Navigate to="/super-admin" replace />;
     } else if (userRole === 'admin') {
       return <Navigate to="/admin" replace />;
     } else {
@@ -334,12 +343,43 @@ function App() {
             </ProtectedRoute>
           }
         />
+        {/* Super Admin Routes */}
         <Route
-          path="/admin/super"
+          path="/super-admin"
           element={
             <ProtectedRoute>
-              <RoleBasedRoute allowedRoles={['admin']}>
-                <SuperAdminPage />
+              <RoleBasedRoute allowedRoles={['superadmin']}>
+                <SuperAdminDashboardPage />
+              </RoleBasedRoute>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/super-admin/permissions"
+          element={
+            <ProtectedRoute>
+              <RoleBasedRoute allowedRoles={['superadmin']}>
+                <PermissionManagementPage />
+              </RoleBasedRoute>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/super-admin/roles"
+          element={
+            <ProtectedRoute>
+              <RoleBasedRoute allowedRoles={['superadmin']}>
+                <RoleManagementPage />
+              </RoleBasedRoute>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/super-admin/admins"
+          element={
+            <ProtectedRoute>
+              <RoleBasedRoute allowedRoles={['superadmin']}>
+                <AdminManagementPage />
               </RoleBasedRoute>
             </ProtectedRoute>
           }

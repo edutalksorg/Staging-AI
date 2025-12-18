@@ -256,7 +256,7 @@ class SignalRService {
         this.externalHandlers.onReceiveAnswer = null;
         this.externalHandlers.onReceiveIceCandidate = null;
 
-        // Optional: Clear buffers on unmount? Or keep them just in case? 
+        // Optional: Clear buffers on unmount? Or keep them just in case?
         // Better to clear to avoid stale signals on next call.
         this.messageBuffer = { offers: [], answers: [], candidates: [] };
     }
@@ -334,8 +334,19 @@ class SignalRService {
                 timestamp
             });
 
-            // Ensure we dispatch endCall to clean up UI and state
-            store.dispatch(endCall());
+            // Get current call state to extract partner name
+            const state = store.getState();
+            const currentCall = state.call.currentCall;
+            const currentUser = state.auth.user;
+
+            let partnerName = 'User';
+            if (currentCall && currentUser) {
+                const isIncoming = currentCall.calleeId === currentUser.id;
+                partnerName = isIncoming ? currentCall.callerName : currentCall.calleeName;
+            }
+
+            // Ensure we dispatch endCall with partner name for rating modal
+            store.dispatch(endCall({ partnerName }));
         });
 
         // 5. CallActive

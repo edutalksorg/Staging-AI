@@ -56,7 +56,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
         { icon: <CreditCard size={18} />, label: 'Subscriptions', path: '/admin/subscriptions' },
         { icon: <User size={18} />, label: 'Profile', path: '/admin/profile' },
         { icon: <Settings size={18} />, label: 'Settings', path: '/admin/settings' },
-        { icon: <Shield size={18} />, label: 'Super Admin', path: '/admin/super' },
     ];
 
     return (

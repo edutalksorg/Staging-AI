@@ -43,7 +43,10 @@ export const callsService = {
 
   // Call Feedback & Rating
   rate: async (callId: string, rating: number) =>
-    apiService.post(`/calls/${callId}/rate`, rating, { headers: { 'Content-Type': 'application/json' } }),
+    apiService.post(`/calls/${callId}/rate`, rating, {
+      headers: { 'Content-Type': 'application/json' },
+      transformRequest: [(data: number) => String(data)]
+    }),
 
   submitFeedback: async (callId: string, feedback: {
     clarity?: number;
