@@ -48,7 +48,7 @@ export const authService = {
     return apiService.put(API_ENDPOINTS.UPDATE_PROFILE, data);
   },
 
-  refreshToken: async (refreshToken: string): Promise<{ token: string }> => {
+  refreshToken: async (refreshToken: string): Promise<any> => {
     return apiService.post(API_ENDPOINTS.REFRESH_TOKEN, { refreshToken });
   },
 

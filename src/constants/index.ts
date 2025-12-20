@@ -5,7 +5,7 @@ export const API_ENDPOINTS = {
   REGISTER: '/auth/register',
   LOGIN: '/auth/login',
   LOGOUT: '/auth/logout',
-  REFRESH_TOKEN: '/auth/refresh',
+  REFRESH_TOKEN: '/auth/refresh-token',
   // Backend uses /users/profile for user profile endpoints (matches /api/v1/users/profile)
   GET_PROFILE: '/users/profile',
   UPDATE_PROFILE: '/users/profile',

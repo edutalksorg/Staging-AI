@@ -44,13 +44,21 @@ const ActiveCallOverlay: React.FC = () => {
 
     // Call duration timer with real-time usage tracking
     useEffect(() => {
-        let interval: NodeJS.Timeout;
+        let interval: NodeJS.Timeout | null = null;
+        let localDuration = durationSeconds; // Track duration locally
+        let isMounted = true; // Flag to prevent stale intervals
 
         if (callState === 'active') {
             callLogger.debug('Starting call duration timer');
 
             interval = setInterval(() => {
-                dispatch(updateDuration(durationSeconds + 1));
+                // Only update if component is still mounted
+                if (!isMounted) {
+                    return;
+                }
+
+                localDuration += 1;
+                dispatch(updateDuration(localDuration));
 
                 // Increment usage for free tier users in real-time
                 if (isFreeTierUser && voiceCallLimitSeconds !== -1) {
@@ -58,8 +66,8 @@ const ActiveCallOverlay: React.FC = () => {
                 }
 
                 // Log every minute
-                if ((durationSeconds + 1) % 60 === 0) {
-                    const minutes = Math.floor((durationSeconds + 1) / 60);
+                if (localDuration % 60 === 0) {
+                    const minutes = Math.floor(localDuration / 60);
                     callLogger.info(`📞 Call duration: ${minutes} minute(s)`, {
                         callId: currentCall?.callId
                     });
@@ -68,11 +76,13 @@ const ActiveCallOverlay: React.FC = () => {
         }
 
         return () => {
+            isMounted = false; // Mark as unmounted
             if (interval) {
                 clearInterval(interval);
             }
         };
-    }, [callState, durationSeconds, dispatch, currentCall?.callId, isFreeTierUser, voiceCallLimitSeconds]);
+        // Only depend on callState to avoid recreating interval on every second
+    }, [callState, dispatch, currentCall?.callId, isFreeTierUser, voiceCallLimitSeconds]);
 
     // Duration warning for free tier users
     useEffect(() => {
@@ -196,9 +206,9 @@ const ActiveCallOverlay: React.FC = () => {
                         <h4 className="font-semibold text-slate-900 dark:text-white truncate">
                             {partnerName}
                         </h4>
-                        <p className={`text - sm font - medium ${callState === 'active' ? '' : 'animate-pulse'
-                            } ${getStatusColor()} `}>
-                            {getStatusText()}
+                        <p className={`text-sm font-medium ${callState === 'active' ? '' : 'animate-pulse'
+                            } ${getStatusColor()}`}>
+                            {callState === 'ringing' ? 'Ringing...' : callState === 'connecting' ? 'Connecting...' : 'Connected'}
                         </p>
                     </div>
                 </div>
@@ -227,32 +237,13 @@ const ActiveCallOverlay: React.FC = () => {
                     </button>
                 </div>
 
-                {/* Connection Quality & Remaining Time */}
+                {/* Connection Quality */}
                 {callState === 'active' && (
-                    <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700 space-y-2">
+                    <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
                         <div className="flex items-center justify-center gap-2 text-xs text-slate-500 dark:text-slate-400">
                             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                             <span>Connected</span>
                         </div>
-
-                        {/* Free Tier Remaining Time Display */}
-                        {isFreeTierUser && sessionRemainingSeconds > 0 && (
-                            <div className="flex items-center justify-center gap-2 text-xs">
-                                <Clock size={14} className="text-blue-500" />
-                                <span className="font-medium text-blue-600 dark:text-blue-400">
-                                    {formatTime(Math.max(0, sessionRemainingSeconds))} remaining
-                                </span>
-                            </div>
-                        )}
-
-                        {/* Time Limit Reached */}
-                        {isFreeTierUser && sessionRemainingSeconds <= 0 && (
-                            <div className="flex items-center justify-center gap-2 text-xs">
-                                <span className="font-medium text-red-600 dark:text-red-400">
-                                    Free trial time limit reached
-                                </span>
-                            </div>
-                        )}
                     </div>
                 )}
             </div>

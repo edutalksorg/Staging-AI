@@ -77,6 +77,15 @@ const LoginPage: React.FC = () => {
           finalUser.role = 'admin';
         }
 
+        // Save refresh token for automatic token refresh
+        const refreshToken = response?.refreshToken || response?.data?.refreshToken;
+        if (refreshToken) {
+          localStorage.setItem('edutalks_refresh_token', refreshToken);
+          console.log('✅ Refresh token saved');
+        } else {
+          console.warn('⚠️ No refresh token in login response');
+        }
+
         // 1. Set initial auth data (token is crucial for subsequent requests)
         dispatch(setAuthData({ user: finalUser, token }));
 

@@ -147,7 +147,8 @@ export const callSlice = createSlice({
     // Cleanup
     endCall: (state, action: PayloadAction<{ partnerName?: string } | undefined>) => {
       // Save call info for rating modal before clearing
-      if (state.currentCall && state.durationSeconds > 0) {
+      // Show rating modal if there was an active call (regardless of duration)
+      if (state.currentCall && state.callState === 'active') {
         const partnerName = action?.payload?.partnerName || 'User';
 
         state.lastCompletedCall = {

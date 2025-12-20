@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { Users, Loader, AlertCircle, CheckCircle, X, Eye, ArrowLeft } from 'lucide-react';
+import { Users, Loader, AlertCircle, CheckCircle, X, Eye, ArrowLeft, Calendar, Clock } from 'lucide-react';
 import { RootState } from '../../store';
 import { adminService } from '../../services/admin';
+import { subscriptionsService } from '../../services/subscriptions';
 import AdminLayout from '../../components/AdminLayout';
 import Button from '../../components/Button';
 import Toast from '../../components/Toast';
@@ -31,6 +32,8 @@ const AdminUsersPage: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
     const [showDetails, setShowDetails] = useState(false);
+    const [userSubscription, setUserSubscription] = useState<any>(null);
+    const [loadingSubscription, setLoadingSubscription] = useState(false);
 
     // Only allow admin role
     if (!user || String(user.role).toLowerCase() !== 'admin') {
@@ -102,6 +105,28 @@ const AdminUsersPage: React.FC = () => {
             Toast({ type: 'error', message: 'Failed to update user status' });
         }
     };
+
+    // Fetch subscription when modal opens
+    useEffect(() => {
+        const fetchSubscription = async () => {
+            if (showDetails && selectedUser) {
+                setLoadingSubscription(true);
+                setUserSubscription(null);
+                try {
+                    const subRes = await subscriptionsService.adminGetUserSubscription(selectedUser.id);
+                    const subData = (subRes as any)?.data || subRes;
+                    console.log('📦 User Subscription Data:', subData);
+                    setUserSubscription(subData);
+                } catch (error) {
+                    console.log('No subscription found for user:', error);
+                    setUserSubscription(null);
+                } finally {
+                    setLoadingSubscription(false);
+                }
+            }
+        };
+        fetchSubscription();
+    }, [showDetails, selectedUser]);
 
     if (loading) {
         return (
@@ -323,6 +348,143 @@ const AdminUsersPage: React.FC = () => {
                                     <p className="text-lg text-slate-900 dark:text-white">
                                         {selectedUser.isApproved ? 'Approved' : 'Pending'}
                                     </p>
+                                </div>
+
+                                {/* Subscription Information */}
+                                <div className="border-t border-slate-200 dark:border-slate-700 pt-4 mt-4">
+                                    <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+                                        <Calendar className="w-5 h-5" />
+                                        Subscription Details
+                                    </h3>
+                                    {loadingSubscription ? (
+                                        <div className="flex items-center justify-center py-4">
+                                            <Loader className="w-5 h-5 animate-spin text-blue-500" />
+                                        </div>
+                                    ) : userSubscription ? (
+                                        <div className="space-y-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg p-4">
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div>
+                                                    <label className="text-xs font-medium text-slate-500 dark:text-slate-400">Plan</label>
+                                                    <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                                                        {userSubscription.plan?.name || userSubscription.planName || 'N/A'}
+                                                    </p>
+                                                </div>
+                                                <div>
+                                                    <label className="text-xs font-medium text-slate-500 dark:text-slate-400">Status</label>
+                                                    <p className="text-sm">
+                                                        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${['active', 'trialing', 'succeeded'].includes(userSubscription.status?.toLowerCase())
+                                                                ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                                                                : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
+                                                            }`}>
+                                                            {userSubscription.status || 'N/A'}
+                                                        </span>
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            {/* Created Date */}
+                                            {userSubscription.createdAt && (
+                                                <div className="border-t border-slate-200 dark:border-slate-700 pt-3">
+                                                    <label className="text-xs font-medium text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                                                        <Clock className="w-3 h-3" />
+                                                        Created At
+                                                    </label>
+                                                    <p className="text-sm text-slate-900 dark:text-white">
+                                                        {new Date(userSubscription.createdAt).toLocaleString('en-IN', {
+                                                            dateStyle: 'full',
+                                                            timeStyle: 'medium'
+                                                        })}
+                                                    </p>
+                                                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                                        Raw: {userSubscription.createdAt}
+                                                    </p>
+                                                </div>
+                                            )}
+
+                                            <div className="grid grid-cols-2 gap-4 border-t border-slate-200 dark:border-slate-700 pt-3">
+                                                <div>
+                                                    <label className="text-xs font-medium text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                                                        <Clock className="w-3 h-3" />
+                                                        Start Date
+                                                    </label>
+                                                    <p className="text-sm text-slate-900 dark:text-white">
+                                                        {userSubscription.startDate
+                                                            ? new Date(userSubscription.startDate).toLocaleString('en-IN', {
+                                                                dateStyle: 'medium',
+                                                                timeStyle: 'short'
+                                                            })
+                                                            : 'N/A'
+                                                        }
+                                                    </p>
+                                                    {userSubscription.startDate && (
+                                                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                                            Raw: {userSubscription.startDate}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                                <div>
+                                                    <label className="text-xs font-medium text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                                                        <Clock className="w-3 h-3" />
+                                                        End Date
+                                                    </label>
+                                                    <p className="text-sm text-slate-900 dark:text-white">
+                                                        {userSubscription.endDate || userSubscription.renewalDate
+                                                            ? new Date(userSubscription.endDate || userSubscription.renewalDate).toLocaleString('en-IN', {
+                                                                dateStyle: 'medium',
+                                                                timeStyle: 'short'
+                                                            })
+                                                            : '❌ NOT SET'
+                                                        }
+                                                    </p>
+                                                    {(userSubscription.endDate || userSubscription.renewalDate) && (
+                                                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                                            Raw: {userSubscription.endDate || userSubscription.renewalDate}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            {(() => {
+                                                const endDate = userSubscription.endDate || userSubscription.renewalDate;
+                                                if (!endDate) {
+                                                    return (
+                                                        <div className="border-t border-slate-200 dark:border-slate-700 pt-3">
+                                                            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
+                                                                <p className="text-sm font-semibold text-red-600 dark:text-red-400">
+                                                                    ⚠️ No End Date Set - This is the problem!
+                                                                </p>
+                                                                <p className="text-xs text-red-600 dark:text-red-400 mt-1">
+                                                                    The subscription was created without an end date. This needs to be fixed in the backend.
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                }
+
+                                                const now = new Date();
+                                                const end = new Date(endDate);
+                                                const diffMs = end.getTime() - now.getTime();
+                                                const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                                                const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+
+                                                return (
+                                                    <div className="border-t border-slate-200 dark:border-slate-700 pt-3">
+                                                        <label className="text-xs font-medium text-slate-500 dark:text-slate-400">Time Remaining</label>
+                                                        <p className={`text-sm font-semibold ${diffMs > 0
+                                                                ? 'text-green-600 dark:text-green-400'
+                                                                : 'text-red-600 dark:text-red-400'
+                                                            }`}>
+                                                            {diffMs > 0
+                                                                ? `${diffDays} days, ${diffHours} hours remaining`
+                                                                : `Expired ${Math.abs(diffDays)} days ago`
+                                                            }
+                                                        </p>
+                                                    </div>
+                                                );
+                                            })()}
+                                        </div>
+                                    ) : (
+                                        <p className="text-sm text-slate-500 dark:text-slate-400 italic">No active subscription</p>
+                                    )}
                                 </div>
                             </div>
                         </div>
