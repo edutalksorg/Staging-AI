@@ -141,7 +141,7 @@ const RegisterPage: React.FC = () => {
       // Do not auto-login after registration; redirect user to login page.
       dispatch(
         showToast({
-          message: 'Registration successful! Please login to continue.',
+          message: 'Registration successful! Please Confirm your email before login .',
           type: 'success',
         })
       );

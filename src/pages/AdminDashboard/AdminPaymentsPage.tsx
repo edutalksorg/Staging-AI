@@ -18,8 +18,13 @@ const AdminPaymentsPage: React.FC = () => {
 
   // Data States
   const [transactions, setTransactions] = useState<AdminPaymentTransaction[]>([]);
+  const [allTransactions, setAllTransactions] = useState<AdminPaymentTransaction[]>([]); // Store all transactions
   const [withdrawals, setWithdrawals] = useState<AdminWithdrawalRequest[]>([]);
   const [refunds, setRefunds] = useState<AdminRefundRequest[]>([]);
+
+  // Filter States
+  const [statusFilter, setStatusFilter] = useState<string>('');
+  const [typeFilter, setTypeFilter] = useState<string>('');
 
   // Modal States
   const [selectedWithdrawal, setSelectedWithdrawal] = useState<AdminWithdrawalRequest | null>(null);
@@ -45,7 +50,16 @@ const AdminPaymentsPage: React.FC = () => {
     try {
       if (activeTab === 'transactions') {
         const res = await adminPaymentsService.getTransactions();
-        setTransactions(res || []);
+        console.log('📊 Raw transactions:', res);
+        // Sort transactions in descending order (newest first)
+        const sortedTransactions = (res || []).sort((a, b) => {
+          const dateA = new Date(a.createdAt).getTime();
+          const dateB = new Date(b.createdAt).getTime();
+          return dateB - dateA; // Descending order (newest first)
+        });
+        console.log('✅ Sorted transactions (newest first):', sortedTransactions.map(t => ({ id: t.id, date: t.createdAt })));
+        setAllTransactions(sortedTransactions); // Store all
+        applyFilters(sortedTransactions); // Apply current filters
       } else if (activeTab === 'withdrawals') {
         const res = await adminPaymentsService.getPendingWithdrawals();
         setWithdrawals(res || []);
@@ -123,12 +137,42 @@ const AdminPaymentsPage: React.FC = () => {
 
   const handleViewTransactionDetails = async (transactionId: string) => {
     try {
-      const details = await adminPaymentsService.getTransactionStatus(transactionId);
-      setSelectedTransaction(details);
+      // Find transaction from existing list instead of API call
+      const transaction = transactions.find(t => t.id === transactionId);
+      if (transaction) {
+        setSelectedTransaction(transaction);
+      } else {
+        dispatch(showToast({ message: 'Transaction not found', type: 'error' }));
+      }
     } catch (error: any) {
       dispatch(showToast({ message: 'Failed to load transaction details', type: 'error' }));
     }
   };
+
+  // Apply filters to transactions
+  const applyFilters = (transactionsToFilter: AdminPaymentTransaction[] = allTransactions) => {
+    let filtered = [...transactionsToFilter];
+
+    // Apply status filter
+    if (statusFilter) {
+      filtered = filtered.filter(t => t.status === statusFilter);
+    }
+
+    // Apply type filter
+    if (typeFilter) {
+      filtered = filtered.filter(t => t.type === typeFilter);
+    }
+
+    console.log(`🔍 Filtered transactions: ${filtered.length} of ${transactionsToFilter.length}`);
+    setTransactions(filtered);
+  };
+
+  // Re-apply filters when filter values change
+  useEffect(() => {
+    if (allTransactions.length > 0) {
+      applyFilters();
+    }
+  }, [statusFilter, typeFilter]);
 
   return (
     <AdminLayout>
@@ -182,11 +226,9 @@ const AdminPaymentsPage: React.FC = () => {
                     Status Filter
                   </label>
                   <select
+                    value={statusFilter}
                     className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white"
-                    onChange={(e) => {
-                      // This will be used when fetching data
-                      fetchData();
-                    }}
+                    onChange={(e) => setStatusFilter(e.target.value)}
                   >
                     <option value="">All Statuses</option>
                     <option value="Completed">Completed</option>
@@ -199,15 +241,16 @@ const AdminPaymentsPage: React.FC = () => {
                     Type Filter
                   </label>
                   <select
+                    value={typeFilter}
                     className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white"
-                    onChange={(e) => {
-                      fetchData();
-                    }}
+                    onChange={(e) => setTypeFilter(e.target.value)}
                   >
                     <option value="">All Types</option>
                     <option value="Payment">Payment</option>
                     <option value="Refund">Refund</option>
                     <option value="Withdrawal">Withdrawal</option>
+                    <option value="ReferralReward">Referral Reward</option>
+                    <option value="SubscriptionPayment">Subscription Payment</option>
                   </select>
                 </div>
                 <div className="flex items-end">
