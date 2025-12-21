@@ -69,6 +69,7 @@ import CallManager from './components/voice-call/CallManager';
 import { LanguagePopup } from './components/common/LanguagePopup';
 import { usePaymentVerification } from './hooks/usePaymentVerification';
 import { useTokenRefresh } from './hooks/useTokenRefresh';
+import AgoraTest from './pages/AgoraTest';
 
 /**
  * Smart Dashboard Router - Routes based on user role
@@ -259,6 +260,9 @@ function App() {
         <Route path="/resend-confirmation" element={<ResendConfirmationPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/register" element={<RegisterPage />} />
+
+        {/* Agora Test Page - No authentication required */}
+        <Route path="/agora-test" element={<AgoraTest />} />
 
         {/* Admin Routes - Restricted to admin role */}
         {/* Redirect /admin to /admindashboard for consistency */}
