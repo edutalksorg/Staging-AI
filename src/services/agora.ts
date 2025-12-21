@@ -5,8 +5,8 @@ import AgoraRTC, {
     UID
 } from 'agora-rtc-sdk-ng';
 
-// Agora Configuration
-const AGORA_APP_ID = '7c39fb4b13864572863c1b484c542c61';
+// Agora Configuration - Production App ID (requires certificate/token)
+const AGORA_APP_ID = '3a2e9a0f5c924ca9b460555916dbaae5';
 
 // Event callback types
 type UserPublishedCallback = (user: IAgoraRTCRemoteUser) => void;

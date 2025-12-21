@@ -13,6 +13,17 @@ import ActiveCallOverlay from './ActiveCallOverlay';
 import CallingModal from './CallingModal';
 import { callLogger } from '../../utils/callLogger';
 
+/**
+ * Convert GUID string to numeric UID for Agora
+ * Backend expects integer UID, so we hash the GUID to a number
+ */
+const guidToNumericUid = (guid: string): number => {
+    // Remove hyphens and take first 8 characters
+    const hex = guid.replace(/-/g, '').substring(0, 8);
+    // Convert to integer (max 32-bit unsigned int)
+    return parseInt(hex, 16) >>> 0;
+};
+
 const CallManager: React.FC = () => {
     const dispatch = useDispatch();
     const { user, token } = useSelector((state: RootState) => state.auth);
@@ -123,15 +134,22 @@ const CallManager: React.FC = () => {
                 // Channel name based on call ID
                 const channelName = `call_${currentCall.callId}`;
 
-                // Use user ID as UID
-                const uid = user.id;
+                // Convert user GUID to numeric UID for Agora
+                // Backend expects integer, Agora accepts both string and number
+                const numericUid = guidToNumericUid(user.id);
+                const stringUid = user.id; // Keep string for Agora join
 
                 // Fetch Agora token from backend
-                // Falls back to null if backend doesn't have the endpoint yet
+                // Backend expects numeric UId parameter
                 let agoraToken: string | null = null;
                 try {
-                    callLogger.debug('Fetching Agora token from backend', { channelName, uid });
-                    const tokenResponse = await callsService.getAgoraToken(channelName, uid) as { token: string };
+                    callLogger.debug('Fetching Agora token from backend', {
+                        channelName,
+                        numericUid,
+                        originalGuid: user.id
+                    });
+                    // Send numeric UID to backend (it expects int)
+                    const tokenResponse = await callsService.getAgoraToken(channelName, numericUid.toString()) as { token: string };
                     agoraToken = tokenResponse.token || null;
                     callLogger.info('✅ Agora token fetched successfully');
                 } catch (error: any) {
@@ -166,8 +184,8 @@ const CallManager: React.FC = () => {
                     }
                 });
 
-                // Join the channel
-                await agoraService.joinChannel(channelName, agoraToken, uid);
+                // Join the channel with numeric UID
+                await agoraService.joinChannel(channelName, agoraToken, numericUid);
 
                 hasJoinedChannel.current = true;
                 callLogger.info('✅ Successfully joined Agora channel');

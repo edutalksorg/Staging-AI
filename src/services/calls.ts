@@ -76,7 +76,7 @@ export const callsService = {
 
   // Agora Token Generation
   getAgoraToken: async (channelName: string, uid: string) =>
-    apiService.get('/calls/agora-token', { params: { channelName, uid } }),
+    apiService.get('/calls/agora-token', { params: { ChannelName: channelName, UId: uid } }),
 
   // Call Recording
   startRecording: async (callId: string) =>
