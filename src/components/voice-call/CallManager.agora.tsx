@@ -40,3 +40,28 @@ const CallManager: React.FC = () => {
 
     useEffect(() => {
         callLogger.debug(`Mute state: ${isMuted ? 'MUTED' : 'UNMUTED'}`);
+    }, [isMuted]);
+
+    return (
+        <>
+            {/* Incoming Call Modal */}
+            <IncomingCallModal />
+
+            {/* Calling Modal (Outgoing) */}
+            <CallingModal />
+
+            {/* Active Call Overlay */}
+            {callState === 'active' && <ActiveCallOverlay />}
+
+            {/* Hidden audio element for incoming call ringtone */}
+            <audio
+                ref={incomingAudioRef}
+                src="/sounds/incoming-call.mp3"
+                loop
+                style={{ display: 'none' }}
+            />
+        </>
+    );
+};
+
+export default CallManager;

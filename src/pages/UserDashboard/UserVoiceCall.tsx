@@ -120,10 +120,12 @@ const UserVoiceCall: React.FC = () => {
                 // Exclude current user from list
                 if (user.userId === currentUser?.id || user.id === currentUser?.id) return false;
 
-                if (user.isOnline !== undefined) return user.isOnline;
+                // STRICT: Only show users who are explicitly online
+                if (user.isOnline !== undefined) return user.isOnline === true;
                 if (user.status === 'online' || user.status === 'Online') return true;
                 if (user.availability === 'Online') return true;
-                return true;
+                // Default to false - don't show users with unknown status
+                return false;
             });
 
             if (!options?.silent) callLogger.info(`Found ${onlineUsers.length} available users out of ${items.length} total`);
@@ -186,11 +188,11 @@ const UserVoiceCall: React.FC = () => {
             currentUserId: currentUser?.id
         });
 
-        // Check if user has trial access or subscription
+        // STRICT: Check if user has trial access or subscription FIRST
         if (!hasActiveSubscription && !isTrialActive) {
             callLogger.warning('Call blocked: No active subscription or trial');
             triggerUpgradeModal();
-            dispatch(showToast({ message: 'Trial expired. Upgrade to Pro for unlimited calls!', type: 'warning' }));
+            dispatch(showToast({ message: 'Your free trial has expired. Upgrade to continue calling!', type: 'error' }));
             return;
         }
 
@@ -198,6 +200,14 @@ const UserVoiceCall: React.FC = () => {
         if (voiceCallLimitSeconds !== -1 && !hasVoiceCallTimeRemaining) {
             callLogger.warning('Call blocked: No remaining call time');
             setShowVoiceCallLimitModal(true);
+            return;
+        }
+
+        // Check if target user is online
+        const targetUser = availableUsers.find(u => (u.userId || u.id) === userId);
+        if (!targetUser) {
+            callLogger.warning('Call blocked: Target user is offline or not available');
+            dispatch(showToast({ message: 'This user is currently offline. Please try again later.', type: 'error' }));
             return;
         }
 

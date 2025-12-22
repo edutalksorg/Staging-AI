@@ -4,12 +4,15 @@ import { Phone, PhoneOff, Clock } from 'lucide-react';
 import { RootState } from '../../store';
 import { clearIncomingInvitation } from '../../store/callSlice';
 import { useVoiceCall } from '../../hooks/useVoiceCall';
+import { useUsageLimits } from '../../hooks/useUsageLimits';
+import { showToast } from '../../store/uiSlice';
 import { callLogger } from '../../utils/callLogger';
 
 const IncomingCallModal: React.FC = () => {
     const dispatch = useDispatch();
     const { incomingInvitation } = useSelector((state: RootState) => state.call);
     const { acceptCall, rejectCall } = useVoiceCall();
+    const { hasActiveSubscription, isTrialActive, triggerUpgradeModal } = useUsageLimits();
     const [timeLeft, setTimeLeft] = useState(60);
     const [isProcessing, setIsProcessing] = useState(false);
 
@@ -88,6 +91,25 @@ const IncomingCallModal: React.FC = () => {
         callLogger.info('👍 User clicked Accept', {
             callId: incomingInvitation.callId
         });
+
+        // CRITICAL: Check if receiver has active subscription or trial
+        if (!hasActiveSubscription && !isTrialActive) {
+            callLogger.warning('❌ Call acceptance blocked: Receiver has expired trial/subscription');
+
+            // Auto-reject the call
+            await rejectCall(incomingInvitation.callId);
+            dispatch(clearIncomingInvitation());
+
+            // Show error and upgrade modal
+            dispatch(showToast({
+                message: 'Your free trial has expired. Upgrade to accept calls!',
+                type: 'error'
+            }));
+            triggerUpgradeModal();
+
+            setIsProcessing(false);
+            return;
+        }
 
         const result = await acceptCall(incomingInvitation.callId);
 

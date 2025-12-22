@@ -239,8 +239,8 @@ const UserQuizTakingPage: React.FC<UserQuizTakingPageProps> = ({ quizId: propQui
                                 <div className="text-xl font-bold">{totalQuestions}</div>
                             </div>
                             <div className="p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
-                                <div className="text-sm text-slate-500 mb-1">Points</div>
-                                <div className="text-xl font-bold text-indigo-600">{totalPoints}</div>
+                                <div className="text-sm text-slate-500 mb-1">Score</div>
+                                <div className="text-xl font-bold text-indigo-600">{score}%</div>
                             </div>
                         </div>
 

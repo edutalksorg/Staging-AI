@@ -5,6 +5,14 @@ import Button from '../../components/Button';
 import { Logo } from '../../components/common/Logo';
 
 const LandingPage: React.FC = () => {
+  // Smooth scroll to section
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
     <div className="min-h-dvh bg-white dark:bg-slate-900">
       {/* Navigation */}
@@ -61,7 +69,7 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* Features Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <section id="features" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <h2 className="text-4xl font-bold text-center mb-16 text-slate-900 dark:text-white">
           Our Features
         </h2>
@@ -143,40 +151,142 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-900 dark:bg-slate-800 text-white border-t border-slate-800 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <h3 className="font-semibold text-lg mb-4">EduTalks</h3>
-              <p className="text-slate-400 text-sm">Master English. Connect with the World.</p>
+      <footer className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white overflow-hidden">
+        {/* Decorative background elements */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary-500 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-secondary-500 rounded-full blur-3xl"></div>
+        </div>
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+
+          {/* Main Footer Content */}
+          <div className="grid md:grid-cols-5 gap-8 mb-12">
+            {/* Brand Column - Larger */}
+            <div className="md:col-span-2">
+              <div className="mb-4">
+                <Logo />
+              </div>
+              <p className="text-slate-400 text-sm mb-6 leading-relaxed">
+                Master English. Connect with the World. Join thousands of learners improving their English through real conversations and AI-powered feedback.
+              </p>
+              {/* Social Media Icons */}
+              <div className="flex gap-3">
+                {[
+                  { name: 'Twitter', icon: '𝕏' },
+                  { name: 'Facebook', icon: 'f' },
+                  { name: 'LinkedIn', icon: 'in' },
+                  { name: 'Instagram', icon: '📷' }
+                ].map((social) => (
+                  <button
+                    key={social.name}
+                    onClick={() => alert(`${social.name} coming soon!`)}
+                    className="w-10 h-10 rounded-lg bg-slate-800/50 hover:bg-gradient-to-br hover:from-primary-600 hover:to-secondary-600 border border-slate-700 hover:border-transparent flex items-center justify-center transition-all transform hover:scale-110"
+                    aria-label={social.name}
+                  >
+                    <span className="text-sm font-bold">{social.icon}</span>
+                  </button>
+                ))}
+              </div>
             </div>
+
+            {/* Product Column */}
             <div>
-              <h4 className="font-semibold mb-4">Product</h4>
-              <ul className="space-y-2 text-slate-400 text-sm">
-                <li><a href="#" className="hover:text-white transition">Features</a></li>
-                <li><a href="#" className="hover:text-white transition">Pricing</a></li>
-                <li><a href="#" className="hover:text-white transition">Security</a></li>
+              <h4 className="font-semibold text-lg mb-4 text-white">Product</h4>
+              <ul className="space-y-3">
+                {[
+                  { label: 'Features', action: () => scrollToSection('features') },
+                  { label: 'Pricing', link: '/subscriptions' },
+                  { label: 'Security', action: () => window.scrollTo({ top: 0, behavior: 'smooth' }) }
+                ].map((item) => (
+                  <li key={item.label}>
+                    {item.link ? (
+                      <Link
+                        to={item.link}
+                        className="text-slate-400 hover:text-white transition-colors flex items-center gap-2 group"
+                      >
+                        <span className="w-1 h-1 rounded-full bg-primary-500 opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                        {item.label}
+                      </Link>
+                    ) : (
+                      <button
+                        onClick={item.action}
+                        className="text-slate-400 hover:text-white transition-colors flex items-center gap-2 group"
+                      >
+                        <span className="w-1 h-1 rounded-full bg-primary-500 opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                        {item.label}
+                      </button>
+                    )}
+                  </li>
+                ))}
               </ul>
             </div>
+
+            {/* Company Column */}
             <div>
-              <h4 className="font-semibold mb-4">Company</h4>
-              <ul className="space-y-2 text-slate-400 text-sm">
-                <li><a href="#" className="hover:text-white transition">About</a></li>
-                <li><a href="#" className="hover:text-white transition">Blog</a></li>
-                <li><a href="#" className="hover:text-white transition">Careers</a></li>
+              <h4 className="font-semibold text-lg mb-4 text-white">Company</h4>
+              <ul className="space-y-3">
+                {[
+                  { label: 'About', action: () => window.scrollTo({ top: 0, behavior: 'smooth' }) },
+                  { label: 'Blog', action: () => alert('Blog coming soon!') },
+                  { label: 'Careers', action: () => alert('Careers page coming soon!') }
+                ].map((item) => (
+                  <li key={item.label}>
+                    <button
+                      onClick={item.action}
+                      className="text-slate-400 hover:text-white transition-colors flex items-center gap-2 group"
+                    >
+                      <span className="w-1 h-1 rounded-full bg-secondary-500 opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                      {item.label}
+                    </button>
+                  </li>
+                ))}
               </ul>
             </div>
+
+            {/* Legal Column */}
             <div>
-              <h4 className="font-semibold mb-4">Legal</h4>
-              <ul className="space-y-2 text-slate-400 text-sm">
-                <li><a href="#" className="hover:text-white transition">Privacy</a></li>
-                <li><a href="#" className="hover:text-white transition">Terms</a></li>
-                <li><a href="#" className="hover:text-white transition">Contact</a></li>
+              <h4 className="font-semibold text-lg mb-4 text-white">Legal</h4>
+              <ul className="space-y-3">
+                <li>
+                  <button
+                    onClick={() => alert('Privacy Policy coming soon!')}
+                    className="text-slate-400 hover:text-white transition-colors flex items-center gap-2 group"
+                  >
+                    <span className="w-1 h-1 rounded-full bg-secondary-500 opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                    Privacy
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => alert('Terms of Service coming soon!')}
+                    className="text-slate-400 hover:text-white transition-colors flex items-center gap-2 group"
+                  >
+                    <span className="w-1 h-1 rounded-full bg-secondary-500 opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                    Terms
+                  </button>
+                </li>
+                <li>
+                  <a
+                    href="mailto:support@edutalks.com"
+                    className="text-slate-400 hover:text-white transition-colors flex items-center gap-2 group"
+                  >
+                    <span className="w-1 h-1 rounded-full bg-secondary-500 opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                    Contact
+                  </a>
+                </li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-slate-800 pt-8 text-center text-slate-400 text-sm">
-            <p>© 2025 EduTalks — Master English. Connect with the World.</p>
+
+          {/* Bottom Bar */}
+          <div className="pt-8 border-t border-slate-700/50 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-slate-400 text-sm">
+              © 2025 EduTalks. All rights reserved.
+            </p>
+            <p className="text-slate-500 text-sm">
+              Made with ❤️ for English learners worldwide
+            </p>
           </div>
         </div>
       </footer>
