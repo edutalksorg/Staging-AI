@@ -473,9 +473,19 @@ const UserVoiceCall: React.FC = () => {
                                                     Voice Call
                                                 </h4>
                                                 <p className="text-xs text-slate-500 flex items-center gap-2 mt-0.5">
-                                                    <span>{new Date(startTime).toLocaleDateString()}</span>
+                                                    <span>{(() => {
+                                                        // Backend sends UTC time without 'Z', so we need to append it
+                                                        const timeStr = startTime?.endsWith?.('Z') ? startTime : `${startTime}Z`;
+                                                        const date = new Date(timeStr);
+                                                        return date.toLocaleDateString();
+                                                    })()}</span>
                                                     <span>•</span>
-                                                    <span>{new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                                    <span>{(() => {
+                                                        // Backend sends UTC time without 'Z', so we need to append it
+                                                        const timeStr = startTime?.endsWith?.('Z') ? startTime : `${startTime}Z`;
+                                                        const date = new Date(timeStr);
+                                                        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                                                    })()}</span>
                                                     {status && (
                                                         <>
                                                             <span>•</span>
