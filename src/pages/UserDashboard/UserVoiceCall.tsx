@@ -114,18 +114,49 @@ const UserVoiceCall: React.FC = () => {
                 if (!options?.silent) callLogger.debug('Data extracted: Wrapped response');
             }
 
-            // Filter to show only online users and EXCLUDE current user
+            // Filter to show only online users with active subscriptions/trials and EXCLUDE current user
             const onlineUsers = items.filter((user: any) => {
                 if (!user) return false;
+
                 // Exclude current user from list
                 if (user.userId === currentUser?.id || user.id === currentUser?.id) return false;
 
                 // STRICT: Only show users who are explicitly online
-                if (user.isOnline !== undefined) return user.isOnline === true;
-                if (user.status === 'online' || user.status === 'Online') return true;
-                if (user.availability === 'Online') return true;
-                // Default to false - don't show users with unknown status
-                return false;
+                let isOnline = false;
+                if (user.isOnline !== undefined) {
+                    isOnline = user.isOnline === true;
+                } else if (user.status === 'online' || user.status === 'Online') {
+                    isOnline = true;
+                } else if (user.availability === 'Online') {
+                    isOnline = true;
+                }
+
+                // If not online, exclude immediately
+                if (!isOnline) return false;
+
+                // NEW: Check subscription/trial status to exclude expired users
+                const subStatus = (user.subscriptionStatus || user.subscription?.status || '').toLowerCase();
+
+                // Exclude users with explicitly expired, cancelled, or past_due subscriptions
+                if (subStatus === 'expired' || subStatus === 'cancelled' || subStatus === 'past_due') {
+                    callLogger.debug(`Filtering out user ${user.userId || user.id}: subscription status is ${subStatus}`);
+                    return false;
+                }
+
+                // Check if trial has expired
+                if (user.trialEndDate) {
+                    const trialEnd = new Date(user.trialEndDate);
+                    const now = new Date();
+
+                    // If trial expired and no active subscription, exclude
+                    if (now >= trialEnd && subStatus !== 'active' && subStatus !== 'trialing' && subStatus !== 'succeeded') {
+                        callLogger.debug(`Filtering out user ${user.userId || user.id}: trial expired and no active subscription`);
+                        return false;
+                    }
+                }
+
+                // User is online and has valid subscription/trial
+                return true;
             });
 
             if (!options?.silent) callLogger.info(`Found ${onlineUsers.length} available users out of ${items.length} total`);

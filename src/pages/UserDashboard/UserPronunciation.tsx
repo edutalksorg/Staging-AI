@@ -35,7 +35,8 @@ const UserPronunciation: React.FC = () => {
     const fetchParagraphs = async () => {
         try {
             setLoading(true);
-            const res = await pronunciationService.listParagraphs();
+            // Fetch all paragraphs with a large page size to avoid pagination
+            const res = await pronunciationService.listParagraphs({ pageSize: 500, pageNumber: 1 });
             const items = (res as any)?.data || (Array.isArray(res) ? res : (res as any)?.items) || [];
             setParagraphs(items);
         } catch (error) {

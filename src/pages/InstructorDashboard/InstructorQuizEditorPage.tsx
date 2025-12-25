@@ -70,17 +70,51 @@ const QuizEditor: React.FC = () => {
             setLoading(true);
             const res = await quizzesService.getById(quizId);
             const data = (res as any)?.data || res;
+
+            // DEBUG: Log the raw response to see what backend is sending
+            console.log('🔍 Quiz loaded from backend:', data);
+            console.log('🔍 Questions from backend:', data.questions);
+
             // Normalize questions to match our internal state structure
-            const questions = (data.questions || []).map((q: any) => ({
-                id: q.id || q._id,
-                type: q.type || 'MultipleChoice',
-                // Backend returns questionText, we use question internally
-                question: q.question || q.questionText || q.QuestionText || '',
-                options: q.options || ['', '', '', ''],
-                // specific logic if correctAnswer is returned as string value instead of index
-                correctAnswer: typeof q.correctAnswer === 'number' ? q.correctAnswer : 0,
-                explanation: q.explanation || ''
-            }));
+            const questions = (data.questions || []).map((q: any, index: number) => {
+                // DEBUG: Log each question's correct answer data
+                console.log(`📝 Question ${index + 1}:`, {
+                    question: q.question || q.questionText,
+                    options: q.options,
+                    correctAnswer: q.correctAnswer,
+                    CorrectAnswer: q.CorrectAnswer,
+                    correctAnswerType: typeof q.correctAnswer
+                });
+
+                // Parse correct answer - backend returns text value, we need index
+                let correctAnswerIndex = 0;
+                if (typeof q.correctAnswer === 'number') {
+                    correctAnswerIndex = q.correctAnswer;
+                    console.log(`✅ Question ${index + 1}: Using numeric index ${correctAnswerIndex}`);
+                } else if (typeof q.correctAnswer === 'string' && q.options) {
+                    // Find which option matches the correct answer text
+                    const matchIndex = q.options.findIndex((opt: string) => opt === q.correctAnswer);
+                    correctAnswerIndex = matchIndex >= 0 ? matchIndex : 0;
+                    console.log(`✅ Question ${index + 1}: Found match at index ${correctAnswerIndex} for "${q.correctAnswer}"`);
+                } else if (typeof q.CorrectAnswer === 'string' && q.options) {
+                    // Try capital case variant
+                    const matchIndex = q.options.findIndex((opt: string) => opt === q.CorrectAnswer);
+                    correctAnswerIndex = matchIndex >= 0 ? matchIndex : 0;
+                    console.log(`✅ Question ${index + 1}: Found match at index ${correctAnswerIndex} for "${q.CorrectAnswer}" (capital C)`);
+                } else {
+                    console.warn(`⚠️ Question ${index + 1}: No valid correct answer found, defaulting to 0`);
+                }
+
+                return {
+                    id: q.id || q._id,
+                    type: q.type || 'MultipleChoice',
+                    // Backend returns questionText, we use question internally
+                    question: q.question || q.questionText || q.QuestionText || '',
+                    options: q.options || ['', '', '', ''],
+                    correctAnswer: correctAnswerIndex,
+                    explanation: q.explanation || ''
+                };
+            });
 
             setFormData({
                 ...data,
@@ -164,36 +198,46 @@ const QuizEditor: React.FC = () => {
             // Construct payload clean and compatible with backend
             // Construct payload clean and compatible with backend
             // Construct payload with multiple casing variations to ensure backend compatibility
-            const mappedQuestions = formData.questions?.map(q => ({
-                // Try all likely variations for the question text
-                questionText: q.question, // MATCH FOUND IN UserQuizTakingPage.tsx
-                QuestionText: q.question,
-                Question: q.question,
-                question: q.question,
-                Type: q.type || 'MultipleChoice',
-                type: q.type || 'MultipleChoice',
-                text: q.question, // Potential fallback
+            const mappedQuestions = formData.questions?.map((q, index) => {
+                const correctAnswerText = q.options[q.correctAnswer] || q.options[0];
+                console.log(`📤 Sending Question ${index + 1}:`, {
+                    question: q.question,
+                    options: q.options,
+                    correctAnswerIndex: q.correctAnswer,
+                    correctAnswerText: correctAnswerText
+                });
 
-                // Options
-                Options: q.options,
-                options: q.options,
+                return {
+                    // Try all likely variations for the question text
+                    questionText: q.question, // MATCH FOUND IN UserQuizTakingPage.tsx
+                    QuestionText: q.question,
+                    Question: q.question,
+                    question: q.question,
+                    Type: q.type || 'MultipleChoice',
+                    type: q.type || 'MultipleChoice',
+                    text: q.question, // Potential fallback
 
-                // Correct Answer
-                CorrectAnswer: q.options[q.correctAnswer] || q.options[0],
-                correctAnswer: q.options[q.correctAnswer] || q.options[0],
+                    // Options
+                    Options: q.options,
+                    options: q.options,
 
-                // Explanation
-                Explanation: q.explanation,
-                explanation: q.explanation,
+                    // Correct Answer - Send the actual text value of the correct option
+                    CorrectAnswer: correctAnswerText,
+                    correctAnswer: correctAnswerText,
 
-                // IDs
-                Id: (q.id && q.id.length > 20) ? q.id : undefined,
-                id: (q.id && q.id.length > 20) ? q.id : undefined,
+                    // Explanation
+                    Explanation: q.explanation,
+                    explanation: q.explanation,
 
-                // Quiz Link
-                QuizId: id,
-                quizId: id
-            }));
+                    // IDs
+                    Id: (q.id && q.id.length > 20) ? q.id : undefined,
+                    id: (q.id && q.id.length > 20) ? q.id : undefined,
+
+                    // Quiz Link
+                    QuizId: id,
+                    quizId: id
+                };
+            });
 
             const quizData = {
                 // IDs
@@ -246,6 +290,9 @@ const QuizEditor: React.FC = () => {
                 PrerequisiteQuizId: (formData as any).prerequisiteQuizId,
                 prerequisiteQuizId: (formData as any).prerequisiteQuizId
             };
+
+            console.log('📦 Complete quiz data being sent to backend:', quizData);
+            console.log('📦 Questions in payload:', quizData.questions || quizData.Questions);
 
             if (isEditMode && id) {
                 await quizzesService.updateQuiz(id, quizData);
