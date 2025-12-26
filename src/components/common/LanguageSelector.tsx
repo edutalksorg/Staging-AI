@@ -71,7 +71,7 @@ export const LanguageSelector: React.FC = () => {
             {/* Dropdown Trigger */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                className="flex items-center gap-1 sm:gap-2 px-1.5 py-1.5 sm:px-3 sm:py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                 aria-haspopup="listbox"
                 aria-expanded={isOpen}
                 aria-label="Select Language"
@@ -95,7 +95,7 @@ export const LanguageSelector: React.FC = () => {
             {/* Dropdown Menu */}
             {isOpen && (
                 <div
-                    className="absolute right-0 mt-2 w-64 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-lg shadow-slate-200/50 dark:shadow-black/50 py-2 z-50 animate-in fade-in zoom-in-95 duration-100 origin-top-right"
+                    className="absolute left-0 sm:right-0 sm:left-auto mt-2 w-64 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-lg shadow-slate-200/50 dark:shadow-black/50 py-2 z-50 animate-in fade-in zoom-in-95 duration-100 origin-top-left sm:origin-top-right"
                     role="listbox"
                 >
                     <div className="px-4 py-2 border-b border-slate-100 dark:border-slate-800 mb-1">

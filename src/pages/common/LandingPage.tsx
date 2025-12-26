@@ -21,19 +21,19 @@ const LandingPage: React.FC = () => {
     <div className="min-h-dvh bg-white dark:bg-slate-900">
       {/* Navigation */}
       <nav className="sticky top-0 z-50 bg-white/80 dark:bg-slate-800/80 backdrop-blur-lg border-b border-slate-200 dark:border-slate-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-4 flex items-center justify-between">
           <div className="cursor-pointer">
-            <Logo />
+            <Logo className="!text-xl sm:!text-2xl" />
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             <LanguageSelector />
             <Link to="/login">
-              <Button variant="outline" size="md">
+              <Button variant="outline" size="md" className="!px-2.5 !py-1.5 !text-xs sm:!px-4 sm:!py-2.5 sm:!text-base">
                 {t('landing.nav.login')}
               </Button>
             </Link>
             <Link to="/register">
-              <Button variant="primary" size="md">
+              <Button variant="primary" size="md" className="!px-2.5 !py-1.5 !text-xs sm:!px-4 sm:!py-2.5 sm:!text-base whitespace-nowrap">
                 {t('landing.nav.getStarted')}
               </Button>
             </Link>
