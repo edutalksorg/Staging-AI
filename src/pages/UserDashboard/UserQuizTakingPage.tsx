@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { CheckSquare, Clock, ArrowRight, RotateCcw, Award, ArrowLeft } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { showToast } from '../../store/uiSlice';
 import { quizzesService } from '../../services/quizzes';
 import UserLayout from '../../components/UserLayout';
@@ -13,6 +14,7 @@ interface UserQuizTakingPageProps {
 }
 
 const UserQuizTakingPage: React.FC<UserQuizTakingPageProps> = ({ quizId: propQuizId, onBack }) => {
+    const { t } = useTranslation();
     const { id } = useParams<{ id: string }>();
     const quizId = propQuizId || id;
     const navigate = useNavigate();
@@ -158,7 +160,7 @@ const UserQuizTakingPage: React.FC<UserQuizTakingPageProps> = ({ quizId: propQui
 
                     const resultData = (attemptDetails as any)?.data || attemptDetails;
                     setQuizResult(resultData);
-                    dispatch(showToast({ message: 'Quiz submitted successfully!', type: 'success' }));
+                    dispatch(showToast({ message: t('quizTaking.submittedSuccess'), type: 'success' }));
                 } catch (fetchError) {
                     console.error('Error fetching attempt details:', fetchError);
                     // Fallback to submission response if detail fetch fails
@@ -168,12 +170,12 @@ const UserQuizTakingPage: React.FC<UserQuizTakingPageProps> = ({ quizId: propQui
             } else {
                 console.warn('No attempt ID returned from submission');
                 setQuizResult(submitData);
-                dispatch(showToast({ message: 'Quiz submitted successfully!', type: 'success' }));
+                dispatch(showToast({ message: t('quizTaking.submittedSuccess'), type: 'success' }));
             }
 
         } catch (error: any) {
             console.error('Quiz submission error:', error);
-            const errorMsg = error.response?.data?.message || error.response?.data?.messages?.[0] || 'Failed to submit quiz';
+            const errorMsg = error.response?.data?.message || error.response?.data?.messages?.[0] || t('quizTaking.submissionError');
             dispatch(showToast({ message: errorMsg, type: 'error' }));
         } finally {
             setSubmitting(false);
@@ -192,7 +194,7 @@ const UserQuizTakingPage: React.FC<UserQuizTakingPageProps> = ({ quizId: propQui
                 <div className="flex items-center justify-center min-h-dvh">
                     <div className="text-center">
                         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-                        <p className="text-slate-600 dark:text-slate-400">Loading quiz...</p>
+                        <p className="text-slate-600 dark:text-slate-400">{t('quizTaking.loading')}</p>
                     </div>
                 </div>
             </UserLayout>
@@ -222,22 +224,22 @@ const UserQuizTakingPage: React.FC<UserQuizTakingPageProps> = ({ quizId: propQui
                                 </div>
                             )}
                             <h2 className="text-3xl font-bold mb-2">
-                                {score >= passingScore ? 'Quiz Passed!' : 'Keep Practicing'}
+                                {score >= passingScore ? t('quizTaking.passed') : t('quizTaking.keepPracticing')}
                             </h2>
 
                         </div>
 
                         <div className="grid grid-cols-3 gap-4 mb-8 text-center">
                             <div className="p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
-                                <div className="text-sm text-slate-500 mb-1">Correct</div>
+                                <div className="text-sm text-slate-500 mb-1">{t('quizTaking.correct')}</div>
                                 <div className="text-xl font-bold text-green-600">{correctAnswers}</div>
                             </div>
                             <div className="p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
-                                <div className="text-sm text-slate-500 mb-1">Total Questions</div>
+                                <div className="text-sm text-slate-500 mb-1">{t('quizTaking.totalQuestions')}</div>
                                 <div className="text-xl font-bold">{totalQuestions}</div>
                             </div>
                             <div className="p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
-                                <div className="text-sm text-slate-500 mb-1">Score</div>
+                                <div className="text-sm text-slate-500 mb-1">{t('quizTaking.score')}</div>
                                 <div className="text-xl font-bold text-indigo-600">{score}%</div>
                             </div>
                         </div>
@@ -247,7 +249,7 @@ const UserQuizTakingPage: React.FC<UserQuizTakingPageProps> = ({ quizId: propQui
                                 variant="outline"
                                 onClick={() => onBack ? onBack() : navigate('/dashboard?tab=quizzes')}
                             >
-                                Back to Dashboard
+                                {t('quizTaking.backToDashboard')}
                             </Button>
 
                             {/* Show Next Quiz ONLY if passed AND next quiz exists */}
@@ -259,14 +261,14 @@ const UserQuizTakingPage: React.FC<UserQuizTakingPageProps> = ({ quizId: propQui
                                     }}
                                     className="bg-indigo-600 hover:bg-indigo-700 text-white"
                                 >
-                                    Next Quiz →
+                                    {t('quizTaking.nextQuiz')} →
                                 </Button>
                             ) : (
                                 <Button
                                     onClick={() => window.location.reload()}
                                     className="bg-indigo-600 hover:bg-indigo-700 text-white"
                                 >
-                                    Retake Quiz
+                                    {t('quizTaking.retake')}
                                 </Button>
                             )}
                         </div>
@@ -297,15 +299,15 @@ const UserQuizTakingPage: React.FC<UserQuizTakingPageProps> = ({ quizId: propQui
                         <p className="text-slate-600 dark:text-slate-400 mb-6">{quiz.description}</p>
                         <div className="grid grid-cols-2 gap-4 mb-8">
                             <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4">
-                                <p className="text-sm text-slate-500">Questions</p>
+                                <p className="text-sm text-slate-500">{t('quizTaking.questions')}</p>
                                 <p className="text-2xl font-bold">{quiz.questions?.length || 0}</p>
                             </div>
                             <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4">
-                                <p className="text-sm text-slate-500">Time Limit</p>
-                                <p className="text-2xl font-bold">{quiz.timeLimit || 10} min</p>
+                                <p className="text-sm text-slate-500">{t('quizTaking.timeLimit')}</p>
+                                <p className="text-2xl font-bold">{quiz.timeLimit || 10} {t('common.mins')}</p>
                             </div>
                         </div>
-                        <Button onClick={handleStartQuiz} className="w-full">Start Quiz</Button>
+                        <Button onClick={handleStartQuiz} className="w-full">{t('quizTaking.start')}</Button>
                     </div>
                 </div>
             </UserLayout>
@@ -320,7 +322,7 @@ const UserQuizTakingPage: React.FC<UserQuizTakingPageProps> = ({ quizId: propQui
             <div className="max-w-4xl mx-auto">
                 <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm mb-6">
                     <div className="flex justify-between items-center">
-                        <span>Question {currentQuestionIndex + 1} of {quiz.questions?.length}</span>
+                        <span>{t('quizTaking.question')} {currentQuestionIndex + 1} {t('quizTaking.of')} {quiz.questions?.length}</span>
                         <span className={`font-mono text-lg font-bold ${timeLeft < 60 ? 'text-red-600' : ''}`}>
                             {formatTime(timeLeft)}
                         </span>
@@ -347,14 +349,14 @@ const UserQuizTakingPage: React.FC<UserQuizTakingPageProps> = ({ quizId: propQui
 
                 <div className="flex justify-between">
                     <Button variant="outline" onClick={handlePrev} disabled={currentQuestionIndex === 0}>
-                        Previous
+                        {t('common.previous')}
                     </Button>
                     {currentQuestionIndex === (quiz.questions?.length || 0) - 1 ? (
                         <Button onClick={handleSubmitQuiz} disabled={submitting}>
-                            {submitting ? 'Submitting...' : 'Submit Quiz'}
+                            {submitting ? t('quizTaking.submitting') : t('quizTaking.submit')}
                         </Button>
                     ) : (
-                        <Button onClick={handleNext}>Next</Button>
+                        <Button onClick={handleNext}>{t('common.next')}</Button>
                     )}
                 </div>
             </div>

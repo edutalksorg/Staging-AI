@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslation } from 'react-i18next';
 import Button from '../../components/Button';
 import { authService } from '../../services/auth';
 import { useDispatch } from 'react-redux';
@@ -15,6 +16,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 const ForgotPasswordPage: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
@@ -41,7 +43,7 @@ const ForgotPasswordPage: React.FC = () => {
       // Optionally navigate to login
       navigate('/login');
     } catch (err: any) {
-      const serverMessage = err?.response?.data?.message || 'Failed to request password reset';
+      const serverMessage = err?.response?.data?.message || t('auth.failedToRequestPasswordReset');
       dispatch(showToast({ message: serverMessage, type: 'error' }));
     } finally {
       setIsLoading(false);
@@ -53,21 +55,21 @@ const ForgotPasswordPage: React.FC = () => {
       <div className="w-full max-w-md">
         <div className="card">
           <h1 className="text-2xl font-bold text-center mb-4 text-slate-900 dark:text-white">
-            Forgot Password
+            {t('auth.forgotPasswordTitle')}
           </h1>
           <p className="text-center text-slate-600 dark:text-slate-400 mb-6">
-            Enter your email and we'll send a password reset link if the account exists.
+            {t('auth.forgotPasswordDesc')}
           </p>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-slate-900 dark:text-white mb-2">
-                Email Address
+                {t('auth.emailLabel')}
               </label>
               <input
                 {...register('email')}
                 type="email"
-                placeholder="you@example.com"
+                placeholder={t('auth.enterEmail')}
                 className="w-full px-4 py-2.5 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               />
               {errors.email && (
@@ -76,14 +78,14 @@ const ForgotPasswordPage: React.FC = () => {
             </div>
 
             <Button type="submit" variant="primary" fullWidth isLoading={isLoading}>
-              Send reset link
+              {t('auth.sendResetLink')}
             </Button>
           </form>
 
           <p className="text-center text-slate-600 dark:text-slate-400 mt-6">
-            Remembered?{' '}
+            {t('auth.remembered')}{' '}
             <Link to="/login" className="text-primary-600 dark:text-primary-400 font-medium hover:underline">
-              Login
+              {t('landing.nav.login')}
             </Link>
           </p>
         </div>

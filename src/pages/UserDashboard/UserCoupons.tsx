@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Tag, Check, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import Button from '../../components/Button';
 import { couponsService } from '../../services/coupons';
 import { useDispatch } from 'react-redux';
@@ -13,9 +14,11 @@ const UserCoupons: React.FC = () => {
     const [validationResult, setValidationResult] = useState<ValidateCouponResponse | null>(null);
     const [validationError, setValidationError] = useState<string>('');
 
+    const { t } = useTranslation();
+
     const handleValidate = async () => {
         if (!validateCode.trim()) {
-            dispatch(showToast({ message: 'Please enter a coupon code', type: 'error' }));
+            dispatch(showToast({ message: t('couponsPage.enterCode'), type: 'error' }));
             return;
         }
 
@@ -38,12 +41,12 @@ const UserCoupons: React.FC = () => {
                 setValidationResult(couponData);
                 setValidationError('');
                 dispatch(showToast({
-                    message: `Coupon "${validateCode.toUpperCase()}" is valid!`,
+                    message: t('couponsPage.validMessage', { code: validateCode.toUpperCase() }),
                     type: 'success'
                 }));
             } else {
                 setValidationResult(null);
-                const errorMsg = couponData?.message || 'Invalid or expired coupon code';
+                const errorMsg = couponData?.message || t('couponsPage.invalidMessage');
                 setValidationError(errorMsg);
                 dispatch(showToast({ message: errorMsg, type: 'error' }));
             }
@@ -53,7 +56,7 @@ const UserCoupons: React.FC = () => {
             const errorMsg = error.response?.data?.message ||
                 error.response?.data?.messages?.[0] ||
                 error.message ||
-                'Invalid or expired coupon';
+                t('couponsPage.invalidMessage');
             setValidationError(errorMsg);
             dispatch(showToast({ message: errorMsg, type: 'error' }));
         } finally {
@@ -63,18 +66,71 @@ const UserCoupons: React.FC = () => {
 
     return (
         <div className="space-y-6 md:space-y-8">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 md:p-8 border border-slate-200 dark:border-slate-700 shadow-sm">
+                <div className="max-w-xl mx-auto space-y-4">
+                    <h2 className="text-2xl font-bold text-center text-slate-900 dark:text-white mb-6">
+                        {t('couponsPage.title')}
+                    </h2>
+                    <div className="flex gap-3">
+                        <div className="relative flex-1">
+                            <Tag className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+                            <input
+                                type="text"
+                                value={validateCode}
+                                onChange={(e) => setValidateCode(e.target.value.toUpperCase())}
+                                placeholder={t('couponsPage.checkCode')}
+                                className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all uppercase placeholder:normal-case"
+                                onKeyPress={(e) => e.key === 'Enter' && handleValidate()}
+                            />
+                        </div>
+                        <Button
+                            onClick={handleValidate}
+                            isLoading={validating}
+                            disabled={!validateCode.trim()}
+                            className="min-w-[120px]"
+                        >
+                            {t('couponsPage.validate')}
+                        </Button>
+                    </div>
+
+                    {validationResult && (
+                        <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4 animate-in fade-in slide-in-from-top-2">
+                            <div className="flex items-start gap-3">
+                                <div className="p-2 bg-green-100 dark:bg-green-900/40 rounded-full">
+                                    <Check className="w-5 h-5 text-green-600 dark:text-green-400" />
+                                </div>
+                                <div>
+                                    <h4 className="font-semibold text-green-900 dark:text-green-100">
+                                        {t('couponsPage.valid')}
+                                    </h4>
+                                    <div className="mt-1 space-y-1 text-sm text-green-800 dark:text-green-200">
+                                        <p>{t('couponsPage.discount')}: <span className="font-medium">
+                                            {validationResult.discountType === 'Percentage'
+                                                ? `${validationResult.discountValue}%`
+                                                : `₹${validationResult.discountValue}`}
+                                        </span></p>
+                                        {(validationResult.minPurchaseAmount ?? 0) > 0 && (
+                                            <p>{t('couponsPage.minPurchase')}: ₹{validationResult.minPurchaseAmount}</p>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
 
             {/* Info Section */}
             <div className="bg-white dark:bg-slate-800 rounded-xl p-6 md:p-8 border border-slate-200 dark:border-slate-700">
                 <div className="flex items-start gap-4">
                     <Tag size={32} className="text-pink-500 flex-shrink-0" />
                     <div>
-                        <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">How to Use Coupons</h3>
+                        <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">{t('couponsPage.howToUse')}</h3>
                         <ul className="space-y-2 text-slate-600 dark:text-slate-400">
-                            <li>• Enter your coupon code in the field above to validate it</li>
-                            <li>• Apply valid coupons during checkout to get discounts on quizzes and plans</li>
-                            <li>• Each coupon has specific terms and conditions</li>
-                            <li>• Contact support if you have any questions about coupons</li>
+                            <li>• {t('couponsPage.step1')}</li>
+                            <li>• {t('couponsPage.step2')}</li>
+                            <li>• {t('couponsPage.step3')}</li>
+                            <li>• {t('couponsPage.step4')}</li>
                         </ul>
                     </div>
                 </div>

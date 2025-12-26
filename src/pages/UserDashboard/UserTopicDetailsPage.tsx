@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { Clock, BarChart, BookOpen, ArrowLeft, Star, CheckCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import UserLayout from '../../components/UserLayout';
 import Button from '../../components/Button';
 import { topicsService } from '../../services/topics';
@@ -13,6 +14,7 @@ interface UserTopicDetailsPageProps {
 }
 
 const UserTopicDetailsPage: React.FC<UserTopicDetailsPageProps> = ({ topicId: propTopicId, onBack }) => {
+    const { t } = useTranslation();
     const { id: paramId } = useParams<{ id: string }>();
     const id = propTopicId || paramId;
     const navigate = useNavigate();
@@ -55,8 +57,6 @@ const UserTopicDetailsPage: React.FC<UserTopicDetailsPageProps> = ({ topicId: pr
                     setNextTopicId(null);
                 }
             }
-
-
 
             // Auto-mark local progress if revisiting?
             // User requested explicit manual completion, so we might skip auto-marking on load.
@@ -121,7 +121,7 @@ const UserTopicDetailsPage: React.FC<UserTopicDetailsPageProps> = ({ topicId: pr
                     onClick={() => onBack ? onBack() : navigate('/dashboard?tab=topics')}
                     leftIcon={<ArrowLeft size={18} />}
                 >
-                    Back to Topics
+                    {t('topicDetails.backToTopics')}
                 </Button>
                 <button
                     onClick={async () => {
@@ -159,10 +159,10 @@ const UserTopicDetailsPage: React.FC<UserTopicDetailsPageProps> = ({ topicId: pr
             <div className="bg-white dark:bg-slate-800 rounded-xl p-8 shadow-sm border border-slate-200 dark:border-slate-700 mb-6">
                 <div className="flex flex-wrap gap-2 mb-4">
                     <span className="px-3 py-1 bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400 rounded-full text-xs font-semibold uppercase tracking-wide">
-                        {topic.category?.name || topic.category || 'General'}
+                        {topic.category?.name || topic.category || t('topic.general', 'General')}
                     </span>
                     <span className="px-3 py-1 bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300 rounded-full text-xs font-medium">
-                        {topic.level || 'All Levels'}
+                        {topic.level || t('topicDetails.allLevels')}
                     </span>
                 </div>
 
@@ -172,13 +172,13 @@ const UserTopicDetailsPage: React.FC<UserTopicDetailsPageProps> = ({ topicId: pr
 
                 <div className="flex flex-wrap items-center gap-6 text-sm text-slate-500 dark:text-slate-400">
                     <span className="flex items-center gap-1">
-                        <Clock size={16} /> {topic.estimatedTime || '15 mins'}
+                        <Clock size={16} /> {topic.estimatedTime || `15 ${t('common.mins')}`}
                     </span>
                     <span className="flex items-center gap-1">
-                        <BarChart size={16} /> {topic.views || 0} views
+                        <BarChart size={16} /> {topic.views || 0} {t('common.views', 'views')}
                     </span>
                     <span className="flex items-center gap-1">
-                        <BookOpen size={16} /> {topic.category?.name || 'General'}
+                        <BookOpen size={16} /> {topic.category?.name || t('topic.general', 'General')}
                     </span>
                 </div>
             </div>
@@ -195,10 +195,10 @@ const UserTopicDetailsPage: React.FC<UserTopicDetailsPageProps> = ({ topicId: pr
 
                 <div className="prose dark:prose-invert max-w-none">
                     <h2 className="text-2xl font-semibold mb-4 text-slate-900 dark:text-white">
-                        About this Topic
+                        {t('topicDetails.about')}
                     </h2>
                     <div className="text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">
-                        {topic.content || topic.description || "No content available."}
+                        {topic.content || topic.description || t('topicDetails.noContent')}
                     </div>
                 </div>
 
@@ -210,7 +210,7 @@ const UserTopicDetailsPage: React.FC<UserTopicDetailsPageProps> = ({ topicId: pr
                         className="w-full sm:w-auto text-green-600 border-green-200 hover:bg-green-50 dark:border-green-800 dark:hover:bg-green-900/20"
                     >
                         <CheckCircle className="mr-2" size={18} />
-                        Mark as Completed & Continue
+                        {t('topicDetails.markCompleted')}
                     </Button>
 
                     {nextTopicId && (
@@ -218,7 +218,7 @@ const UserTopicDetailsPage: React.FC<UserTopicDetailsPageProps> = ({ topicId: pr
                             onClick={() => navigate(`/topics/${nextTopicId}`)}
                             className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white group"
                         >
-                            Skip to Next Topic
+                            {t('topicDetails.skipNext')}
                             <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
                         </Button>
                     )}
@@ -226,19 +226,19 @@ const UserTopicDetailsPage: React.FC<UserTopicDetailsPageProps> = ({ topicId: pr
 
                 {/* Topic Info Sidebar */}
                 <div className="mt-8 p-6 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-700">
-                    <h3 className="font-semibold text-slate-900 dark:text-white mb-4">Topic Information</h3>
+                    <h3 className="font-semibold text-slate-900 dark:text-white mb-4">{t('topicDetails.info')}</h3>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                         <div>
-                            <span className="block text-sm text-slate-500 dark:text-slate-400 mb-1">Level</span>
-                            <span className="font-medium text-slate-900 dark:text-white">{topic.level || 'All Levels'}</span>
+                            <span className="block text-sm text-slate-500 dark:text-slate-400 mb-1">{t('topicDetails.level')}</span>
+                            <span className="font-medium text-slate-900 dark:text-white">{topic.level || t('topicDetails.allLevels')}</span>
                         </div>
                         <div>
-                            <span className="block text-sm text-slate-500 dark:text-slate-400 mb-1">Duration</span>
-                            <span className="font-medium text-slate-900 dark:text-white">{topic.estimatedTime || '15 mins'}</span>
+                            <span className="block text-sm text-slate-500 dark:text-slate-400 mb-1">{t('topicDetails.duration')}</span>
+                            <span className="font-medium text-slate-900 dark:text-white">{topic.estimatedTime || `15 ${t('common.mins')}`}</span>
                         </div>
                         <div>
-                            <span className="block text-sm text-slate-500 dark:text-slate-400 mb-1">Category</span>
-                            <span className="font-medium text-slate-900 dark:text-white">{topic.category?.name || topic.category || 'General'}</span>
+                            <span className="block text-sm text-slate-500 dark:text-slate-400 mb-1">{t('topicDetails.category')}</span>
+                            <span className="font-medium text-slate-900 dark:text-white">{topic.category?.name || topic.category || t('topic.general', 'General')}</span>
                         </div>
                     </div>
                 </div>

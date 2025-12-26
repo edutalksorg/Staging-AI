@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Edit, Trash2, HelpCircle, Clock, CheckSquare, ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import InstructorLayout from './InstructorLayout';
 import Button from '../../components/Button';
 import { quizzesService } from '../../services/quizzes';
@@ -8,6 +9,7 @@ import { showToast } from '../../store/uiSlice';
 import { useDispatch } from 'react-redux';
 
 const InstructorQuizzesPage: React.FC = () => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [allQuizzes, setAllQuizzes] = useState<any[]>([]); // All filtered quizzes
@@ -109,7 +111,7 @@ const InstructorQuizzesPage: React.FC = () => {
 
         try {
             await quizzesService.deleteQuiz(id);
-            dispatch(showToast({ message: 'Quiz deleted successfully', type: 'success' }));
+            dispatch(showToast({ message: t('quiz.deleteSuccess'), type: 'success' }));
             fetchQuizzes();
         } catch (error: any) {
             console.error('Failed to delete quiz:', error);
@@ -142,7 +144,7 @@ const InstructorQuizzesPage: React.FC = () => {
 
                         // Force update UI locally without fetching
                         setQuizzes(prev => prev.filter(q => (q.id || q._id) !== id));
-                        dispatch(showToast({ message: 'Quiz deleted (locally)', type: 'success' }));
+                        dispatch(showToast({ message: t('quiz.deleteSuccess'), type: 'success' }));
                         return;
                     } catch (localError) {
                         console.error('Local hide failed', localError);
@@ -159,11 +161,11 @@ const InstructorQuizzesPage: React.FC = () => {
             if (!isCurrentlyPublished) {
                 // Publish the quiz
                 await quizzesService.publishQuiz(id);
-                dispatch(showToast({ message: 'Quiz published successfully! Users can now see it.', type: 'success' }));
+                dispatch(showToast({ message: t('quiz.publishSuccess'), type: 'success' }));
             } else {
                 // Unpublish the quiz
                 await quizzesService.unpublishQuiz(id);
-                dispatch(showToast({ message: 'Quiz unpublished successfully', type: 'success' }));
+                dispatch(showToast({ message: t('quiz.unpublishSuccess'), type: 'success' }));
             }
             // Small delay to ensure backend persistence
             setTimeout(() => {
@@ -200,24 +202,24 @@ const InstructorQuizzesPage: React.FC = () => {
                         onClick={() => navigate('/instructor/quizzes/new')}
                         className="w-full md:w-auto"
                     >
-                        Create New Quiz
+                        {t('quiz.createNew')}
                     </Button>
                 </div>
 
                 {loading ? (
-                    <div className="text-center py-12 text-slate-500">Loading quizzes...</div>
+                    <div className="text-center py-12 text-slate-500">{t('common.loading')}</div>
                 ) : quizzes.length === 0 ? (
                     <div className="text-center py-12">
                         <HelpCircle className="w-16 h-16 text-slate-400 dark:text-slate-600 mx-auto mb-4 opacity-50" />
                         <p className="text-slate-600 dark:text-slate-400 mb-4">
-                            No quizzes yet. Create your first quiz to challenge your students!
+                            {t('quiz.noQuizzesDesc')}
                         </p>
                         <Button
                             variant="primary"
                             leftIcon={<Plus size={20} />}
                             onClick={() => navigate('/instructor/quizzes/new')}
                         >
-                            Create First Quiz
+                            {t('quiz.createFirst')}
                         </Button>
                     </div>
                 ) : (
@@ -242,7 +244,7 @@ const InstructorQuizzesPage: React.FC = () => {
                                             : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300'
                                             }`}
                                     >
-                                        {quiz.isPublished ? 'Published' : 'Draft'}
+                                        {quiz.isPublished ? t('quiz.published') : t('quiz.draft')}
                                     </span>
                                 </div>
 
@@ -253,7 +255,7 @@ const InstructorQuizzesPage: React.FC = () => {
                                     </span>
                                     <span className="flex items-center gap-1">
                                         <CheckSquare size={14} />
-                                        {quiz.questions?.length || quiz.totalQuestions || 0} Questions
+                                        {quiz.questions?.length || quiz.totalQuestions || 0} {t('quiz.questions')}
                                     </span>
                                     <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-700 rounded">
                                         {quiz.difficulty || 'Beginner'}
@@ -268,7 +270,7 @@ const InstructorQuizzesPage: React.FC = () => {
                                         leftIcon={<Edit size={16} />}
                                         onClick={() => navigate(`/instructor/quizzes/${quiz.id || quiz._id}`)}
                                     >
-                                        Edit
+                                        {t('common.edit')}
                                     </Button>
                                     <Button
                                         variant="ghost"
@@ -276,7 +278,7 @@ const InstructorQuizzesPage: React.FC = () => {
                                         className={quiz.isPublished ? 'text-orange-600' : 'text-green-600'}
                                         onClick={() => handlePublish(quiz.id || quiz._id, quiz.isPublished)}
                                     >
-                                        {quiz.isPublished ? 'Unpublish' : 'Publish'}
+                                        {quiz.isPublished ? t('quiz.unpublish') : t('quiz.publish')}
                                     </Button>
                                     <Button
                                         variant="ghost"
@@ -285,7 +287,7 @@ const InstructorQuizzesPage: React.FC = () => {
                                         leftIcon={<Trash2 size={16} />}
                                         onClick={() => handleDelete(quiz.id || quiz._id)}
                                     >
-                                        Delete
+                                        {t('common.delete')}
                                     </Button>
                                 </div>
                             </div>
@@ -297,7 +299,7 @@ const InstructorQuizzesPage: React.FC = () => {
                 {quizzes.length > 0 && (
                     <div className="flex items-center justify-between py-4 mt-6">
                         <div className="text-sm text-slate-500 dark:text-slate-400">
-                            Page {page} of {totalPages} ({totalCount} total quizzes)
+                            {t('quiz.page')} {page} {t('quiz.of')} {totalPages} ({totalCount} {t('quiz.totalQuizzes')})
                         </div>
                         <div className="flex gap-2">
                             <Button
@@ -307,7 +309,7 @@ const InstructorQuizzesPage: React.FC = () => {
                                 disabled={page <= 1 || loading}
                                 leftIcon={<ChevronLeft size={16} />}
                             >
-                                Previous
+                                {t('common.previous')}
                             </Button>
                             <Button
                                 variant="outline"
@@ -316,7 +318,7 @@ const InstructorQuizzesPage: React.FC = () => {
                                 disabled={page >= totalPages || loading}
                                 rightIcon={<ChevronRight size={16} />}
                             >
-                                Next
+                                {t('common.next')}
                             </Button>
                         </div>
                     </div>

@@ -1,11 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, Check, Globe } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { LANGUAGES, Language } from '../../constants/languages';
 
 const STORAGE_KEY = 'edutalks_language_preference';
 const DEFAULT_LANG_CODE = 'English';
 
 export const LanguageSelector: React.FC = () => {
+    const { i18n } = useTranslation();
+
     // Initialize state from localStorage or default to English
     const [selectedLanguage, setSelectedLanguage] = useState<Language>(() => {
         const saved = localStorage.getItem(STORAGE_KEY);
@@ -20,14 +23,16 @@ export const LanguageSelector: React.FC = () => {
     const [showAllLanguages, setShowAllLanguages] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
-    // Persist to localStorage whenever selection changes
+    // Persist to localStorage and change i18n language whenever selection changes
     useEffect(() => {
         if (selectedLanguage) {
             localStorage.setItem(STORAGE_KEY, selectedLanguage.name);
-            // Dispatch custom event if other components need to know (optional but good for decoupled apps)
+            // Change i18n language
+            i18n.changeLanguage(selectedLanguage.code);
+            // Dispatch custom event if other components need to know
             window.dispatchEvent(new Event('languageChanged'));
         }
-    }, [selectedLanguage]);
+    }, [selectedLanguage, i18n]);
 
     // Close on click outside & Reset list view
     useEffect(() => {
@@ -59,9 +64,7 @@ export const LanguageSelector: React.FC = () => {
     const hasMoreLanguages = !showAllLanguages && LANGUAGES.length > priorityLanguages.length;
 
     // Button Label Text
-    const buttonLabel = selectedLanguage.code === 'English'
-        ? 'English'
-        : `English / ${selectedLanguage.name}`;
+    const buttonLabel = selectedLanguage.name;
 
     return (
         <div className="relative" ref={dropdownRef}>
@@ -76,12 +79,6 @@ export const LanguageSelector: React.FC = () => {
                 {/* Mobile: Globe icon, Desktop: Flags */}
                 <Globe size={20} className="sm:hidden text-slate-600 dark:text-slate-400" />
                 <span className="hidden sm:flex items-center text-xl leading-none">
-                    {selectedLanguage.code !== 'English' && (
-                        <>
-                            <span>🇬🇧</span>
-                            <span className="mx-1 text-slate-300">/</span>
-                        </>
-                    )}
                     <span>{selectedLanguage.flag}</span>
                 </span>
 

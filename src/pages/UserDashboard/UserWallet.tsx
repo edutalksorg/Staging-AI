@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Wallet, TrendingUp, TrendingDown, Clock, ArrowLeft, AlertCircle, CheckCircle, XCircle, Gift } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import Button from '../../components/Button';
 import { walletService } from '../../services/wallet';
 import { referralsService } from '../../services/referrals';
@@ -31,6 +32,7 @@ interface Transaction {
 }
 
 const UserWallet: React.FC = () => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -89,8 +91,6 @@ const UserWallet: React.FC = () => {
         }
     };
 
-
-
     const [showWithdraw, setShowWithdraw] = useState(false);
     const [withdrawLoading, setWithdrawLoading] = useState(false);
 
@@ -131,7 +131,7 @@ const UserWallet: React.FC = () => {
         }
     };
 
-    if (loading) return <div className="text-center py-12 text-slate-500">Loading wallet...</div>;
+    if (loading) return <div className="text-center py-12 text-slate-500">{t('common.loading')}</div>;
 
     // Helper function to determine transaction icon and color
     const getTransactionStyle = (type: string) => {
@@ -161,21 +161,21 @@ const UserWallet: React.FC = () => {
             case 'completed':
                 return (
                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
-                        <CheckCircle size={12} /> Completed
+                        <CheckCircle size={12} /> {t('wallet.completed')}
                     </span>
                 );
             case 'pending':
             case 'processing':
                 return (
                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400">
-                        <AlertCircle size={12} /> {status}
+                        <AlertCircle size={12} /> {t('wallet.pending')}
                     </span>
                 );
             case 'failed':
             case 'cancelled':
                 return (
                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">
-                        <XCircle size={12} /> {status}
+                        <XCircle size={12} /> {t('wallet.failed')}
                     </span>
                 );
             default:
@@ -197,7 +197,7 @@ const UserWallet: React.FC = () => {
                 >
                     <ArrowLeft size={24} />
                 </button>
-                <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white">My Wallet</h1>
+                <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white">{t('wallet.myWallet')}</h1>
             </div>
 
             {/* Balance Card */}
@@ -207,25 +207,25 @@ const UserWallet: React.FC = () => {
                 <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                     <div>
                         <p className="text-indigo-100 font-medium mb-1 flex items-center gap-2">
-                            <Wallet size={18} /> Available Balance
+                            <Wallet size={18} /> {t('wallet.availableBalance')}
                         </p>
                         <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-4">₹{walletData.availableBalance.toFixed(2)}</h2>
 
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 text-xs md:text-sm">
                             <div>
-                                <p className="text-indigo-200">Total Balance</p>
+                                <p className="text-indigo-200">{t('wallet.totalBalance')}</p>
                                 <p className="font-semibold">₹{walletData.balance.toFixed(2)}</p>
                             </div>
                             <div>
-                                <p className="text-indigo-200">Frozen Amount</p>
+                                <p className="text-indigo-200">{t('wallet.frozenAmount')}</p>
                                 <p className="font-semibold">₹{walletData.frozenAmount.toFixed(2)}</p>
                             </div>
                             <div>
-                                <p className="text-indigo-200">Total Earnings</p>
+                                <p className="text-indigo-200">{t('wallet.totalEarnings')}</p>
                                 <p className="font-semibold text-green-300">₹{walletData.totalEarnings.toFixed(2)}</p>
                             </div>
                             <div>
-                                <p className="text-indigo-200">Total Spent</p>
+                                <p className="text-indigo-200">{t('wallet.totalSpent')}</p>
                                 <p className="font-semibold text-red-300">₹{walletData.totalSpent.toFixed(2)}</p>
                             </div>
                         </div>
@@ -235,7 +235,7 @@ const UserWallet: React.FC = () => {
                             className="bg-white/20 hover:bg-white/30 text-white border-white/40 border shadow-md w-full sm:w-auto min-h-[44px] md:min-h-0"
                             onClick={() => setShowWithdraw(!showWithdraw)}
                         >
-                            Withdraw
+                            {t('wallet.withdraw')}
                         </Button>
 
                     </div>
@@ -254,7 +254,7 @@ const UserWallet: React.FC = () => {
                                     <Gift size={24} />
                                 </div>
                                 <div>
-                                    <p className="text-amber-100 font-medium text-sm">Referral Earnings</p>
+                                    <p className="text-amber-100 font-medium text-sm">{t('wallet.referralEarnings')}</p>
                                     <h3 className="text-3xl font-bold">₹{referralEarnings.toFixed(2)}</h3>
                                 </div>
                             </div>
@@ -262,7 +262,7 @@ const UserWallet: React.FC = () => {
                                 onClick={() => navigate('/referrals')}
                                 className="bg-white/20 hover:bg-white/30 text-white border-white/40 border shadow-md text-sm"
                             >
-                                View Referrals
+                                {t('wallet.viewReferrals')}
                             </Button>
                         </div>
 
@@ -270,9 +270,7 @@ const UserWallet: React.FC = () => {
                             <div className="flex items-start gap-2">
                                 <AlertCircle size={16} className="mt-0.5 flex-shrink-0" />
                                 <p className="text-xs text-amber-50">
-                                    <strong>Pending Wallet Credit:</strong> Your referral earnings are being processed.
-                                    Once your referred friends complete their requirements, these rewards will be automatically
-                                    credited to your wallet balance.
+                                    <strong>{t('wallet.pendingCredit')}:</strong> {t('wallet.pendingCreditDesc')}
                                 </p>
                             </div>
                         </div>
@@ -283,38 +281,38 @@ const UserWallet: React.FC = () => {
             {/* Withdrawal Form */}
             {showWithdraw && (
                 <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 animate-in slide-in-from-top-4">
-                    <h3 className="font-bold text-lg mb-4 text-slate-900 dark:text-white">Request Withdrawal</h3>
+                    <h3 className="font-bold text-lg mb-4 text-slate-900 dark:text-white">{t('wallet.requestWithdrawal')}</h3>
                     <form onSubmit={handleWithdraw} className="space-y-4 max-w-lg">
                         <div>
-                            <label className="block text-sm font-medium mb-1 dark:text-slate-300">Amount (₹)</label>
+                            <label className="block text-sm font-medium mb-1 dark:text-slate-300">{t('wallet.amount')} (₹)</label>
                             <input name="amount" type="number" min="1" max={walletData.availableBalance} required className="w-full p-2 border rounded dark:bg-slate-900 dark:border-slate-700 dark:text-white" placeholder="0.00" />
-                            <p className="text-xs text-slate-500 mt-1">Available: ₹{walletData.availableBalance.toFixed(2)}</p>
+                            <p className="text-xs text-slate-500 mt-1">{t('wallet.available')}: ₹{walletData.availableBalance.toFixed(2)}</p>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-sm font-medium mb-1 dark:text-slate-300">Bank Name</label>
+                                <label className="block text-sm font-medium mb-1 dark:text-slate-300">{t('wallet.bankName')}</label>
                                 <input name="bankName" required className="w-full p-2 border rounded dark:bg-slate-900 dark:border-slate-700 dark:text-white" placeholder="Bank Name" />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium mb-1 dark:text-slate-300">IFSC Code</label>
+                                <label className="block text-sm font-medium mb-1 dark:text-slate-300">{t('wallet.ifsc')}</label>
                                 <input name="ifsc" required className="w-full p-2 border rounded dark:bg-slate-900 dark:border-slate-700 dark:text-white" placeholder="IFSC" />
                             </div>
                         </div>
                         <div>
-                            <label className="block text-sm font-medium mb-1 dark:text-slate-300">Account Number</label>
+                            <label className="block text-sm font-medium mb-1 dark:text-slate-300">{t('wallet.accountNumber')}</label>
                             <input name="accountNumber" required className="w-full p-2 border rounded dark:bg-slate-900 dark:border-slate-700 dark:text-white" placeholder="Account Number" />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium mb-1 dark:text-slate-300">Account Holder Name</label>
+                            <label className="block text-sm font-medium mb-1 dark:text-slate-300">{t('wallet.accountHolder')}</label>
                             <input name="accountHolderName" required className="w-full p-2 border rounded dark:bg-slate-900 dark:border-slate-700 dark:text-white" placeholder="Name as per bank" />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium mb-1 dark:text-slate-300">UPI ID (Optional)</label>
+                            <label className="block text-sm font-medium mb-1 dark:text-slate-300">{t('wallet.upi')}</label>
                             <input name="upi" className="w-full p-2 border rounded dark:bg-slate-900 dark:border-slate-700 dark:text-white" placeholder="user@upi" />
                         </div>
                         <div className="flex gap-2 pt-2">
-                            <Button type="submit" isLoading={withdrawLoading}>Submit Request</Button>
-                            <Button type="button" variant="ghost" onClick={() => setShowWithdraw(false)}>Cancel</Button>
+                            <Button type="submit" isLoading={withdrawLoading}>{t('wallet.submitRequest')}</Button>
+                            <Button type="button" variant="ghost" onClick={() => setShowWithdraw(false)}>{t('common.cancel')}</Button>
                         </div>
                     </form>
                 </div>
@@ -324,7 +322,7 @@ const UserWallet: React.FC = () => {
             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
                 <div className="p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
                     <h3 className="font-semibold text-slate-900 dark:text-white flex items-center gap-2">
-                        <Clock size={18} className="text-slate-400" /> Recent Transactions
+                        <Clock size={18} className="text-slate-400" /> {t('wallet.recentTransactions')}
                     </h3>
                 </div>
 
@@ -368,7 +366,7 @@ const UserWallet: React.FC = () => {
                             );
                         })
                     ) : (
-                        <div className="p-8 text-center text-slate-500 italic">No recent transactions</div>
+                        <div className="p-8 text-center text-slate-500 italic">{t('wallet.noTransactions')}</div>
                     )}
                 </div>
             </div>
@@ -377,4 +375,3 @@ const UserWallet: React.FC = () => {
 };
 
 export default UserWallet;
-

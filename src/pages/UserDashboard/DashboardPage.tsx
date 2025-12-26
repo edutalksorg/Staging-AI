@@ -10,6 +10,7 @@ import {
     Users,
     User
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import UserLayout from '../../components/UserLayout';
 import UserTopicBrowser from './UserTopicBrowser';
 import UserQuizInterface from './UserQuizInterface';
@@ -27,6 +28,7 @@ import { useUsageLimits } from '../../hooks/useUsageLimits';
 type TabType = 'voice' | 'topics' | 'quizzes' | 'pronunciation' | 'wallet' | 'subscriptions' | 'referrals' | 'profile';
 
 const DashboardPage: React.FC = () => {
+    const { t } = useTranslation();
     const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
     const tabParam = searchParams.get('tab') as TabType;
@@ -90,10 +92,10 @@ const DashboardPage: React.FC = () => {
     };
 
     const tabs = [
-        { id: 'voice' as TabType, label: 'Voice Calls', icon: Phone },
-        { id: 'topics' as TabType, label: 'Topics', icon: BookOpen },
-        { id: 'quizzes' as TabType, label: 'Quizzes', icon: CheckSquare },
-        { id: 'pronunciation' as TabType, label: 'Pronunciation', icon: Mic },
+        { id: 'voice' as TabType, label: t('nav.voiceCalls'), icon: Phone },
+        { id: 'topics' as TabType, label: t('nav.topics'), icon: BookOpen },
+        { id: 'quizzes' as TabType, label: t('nav.quizzes'), icon: CheckSquare },
+        { id: 'pronunciation' as TabType, label: t('nav.pronunciation'), icon: Mic },
     ];
 
     const renderContent = () => {
@@ -119,10 +121,10 @@ const DashboardPage: React.FC = () => {
                 {/* Header */}
                 <div className="mb-6 md:mb-8">
                     <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white mb-2">
-                        Learning Dashboard
+                        {t('dashboard.title')}
                     </h1>
                     <p className="text-sm md:text-base lg:text-lg text-slate-600 dark:text-slate-400">
-                        Your personalized learning hub
+                        {t('dashboard.readyToLearn')}
                     </p>
                 </div>
 
@@ -169,14 +171,14 @@ const DashboardPage: React.FC = () => {
                                     <Wallet size={24} />
                                 </div>
                                 <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-1">
-                                    {isExplicitlyCancelled ? 'No Active Plan' : 'Trial Expired'}
+                                    {isExplicitlyCancelled ? t('dashboard.lockOverlay.noPlan') : t('dashboard.lockOverlay.trialExpired')}
                                 </h3>
                                 <p className="text-sm text-slate-600 dark:text-slate-400 text-center mb-4 leading-relaxed">
                                     {isExplicitlyCancelled
-                                        ? "You don't have any active plan."
-                                        : "Your free trial has ended."}
+                                        ? t('dashboard.lockOverlay.noPlanDesc')
+                                        : t('dashboard.lockOverlay.trialExpiredDesc')}
                                     <br />
-                                    Please subscribe to unlock content.
+                                    {t('dashboard.lockOverlay.unlockPrompt')}
                                 </p>
                                 <button
                                     className="px-5 py-2 text-sm bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-all w-full"
@@ -185,7 +187,7 @@ const DashboardPage: React.FC = () => {
                                         navigate('/subscriptions');
                                     }}
                                 >
-                                    Choose Plan
+                                    {t('subscription.upgradeNow')}
                                 </button>
                             </div>
                         </div>

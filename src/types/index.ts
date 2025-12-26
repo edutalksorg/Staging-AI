@@ -247,9 +247,15 @@ export interface ValidateCouponRequest {
 }
 
 export interface ValidateCouponResponse {
+  isValid?: boolean;
+  message?: string;
   discountAmount: number;
   finalPrice: number;
   discountPercentage?: number;
+  discountType?: 'Percentage' | 'Flat' | 'FixedAmount' | number;
+  discountValue?: number;
+  minPurchaseAmount?: number; // Ensure this matches backend response
+  code?: string;
 }
 
 export interface ApplyCouponRequest {

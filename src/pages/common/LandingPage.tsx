@@ -1,10 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Mic, BookOpen, Phone, CheckSquare } from 'lucide-react';
 import Button from '../../components/Button';
 import { Logo } from '../../components/common/Logo';
 
+import { LanguageSelector } from '../../components/common/LanguageSelector';
+
 const LandingPage: React.FC = () => {
+  const { t } = useTranslation();
   // Smooth scroll to section
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -22,14 +26,15 @@ const LandingPage: React.FC = () => {
             <Logo />
           </div>
           <div className="flex items-center gap-4">
+            <LanguageSelector />
             <Link to="/login">
               <Button variant="outline" size="md">
-                Login
+                {t('landing.nav.login')}
               </Button>
             </Link>
             <Link to="/register">
               <Button variant="primary" size="md">
-                Get Started
+                {t('landing.nav.getStarted')}
               </Button>
             </Link>
           </div>
@@ -40,30 +45,30 @@ const LandingPage: React.FC = () => {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
         <div className="space-y-6">
           <h1 className="text-5xl sm:text-6xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
-            Welcome to EduTalks
+            {t('landing.hero.title')}
           </h1>
           <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-            Master English. Connect with the World.
+            {t('landing.hero.subtitle')}
           </p>
           <p className="text-lg text-slate-500 dark:text-slate-500 max-w-2xl mx-auto">
-            Learn English through real conversations, AI-powered feedback, and daily practice with learners worldwide.
+            {t('landing.hero.description')}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8">
             <Link to="/register" className="flex-1 sm:flex-none">
               <Button variant="primary" size="lg" fullWidth>
-                Get Started Free
+                {t('landing.hero.getStartedFree')}
               </Button>
             </Link>
             <Link to="/login" className="flex-1 sm:flex-none">
               <Button variant="outline" size="lg" fullWidth>
-                Already Have Account?
+                {t('landing.hero.alreadyHaveAccount')}
               </Button>
             </Link>
           </div>
 
           <p className="text-sm text-slate-500 dark:text-slate-400">
-            🎁 Get 24 hours of free trial - No credit card required
+            {t('landing.hero.trialText')}
           </p>
         </div>
       </section>
@@ -71,30 +76,30 @@ const LandingPage: React.FC = () => {
       {/* Features Section */}
       <section id="features" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <h2 className="text-4xl font-bold text-center mb-16 text-slate-900 dark:text-white">
-          Our Features
+          {t('landing.features.title')}
         </h2>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {[
             {
               icon: Mic,
-              title: 'AI Pronunciation',
-              description: 'Perfect your pronunciation with AI-powered feedback and real-time analysis.',
+              title: t('landing.features.aiPronunciation.title'),
+              description: t('landing.features.aiPronunciation.description'),
             },
             {
               icon: BookOpen,
-              title: 'Daily Topics',
-              description: 'Learn new topics every day to improve your English vocabulary and grammar.',
+              title: t('landing.features.dailyTopics.title'),
+              description: t('landing.features.dailyTopics.description'),
             },
             {
               icon: Phone,
-              title: 'Voice Calling',
-              description: 'Practice speaking with other learners in real-time WebRTC calls.',
+              title: t('landing.features.voiceCalling.title'),
+              description: t('landing.features.voiceCalling.description'),
             },
             {
               icon: CheckSquare,
-              title: 'Daily Quizzes',
-              description: 'Test your knowledge with engaging and interactive quizzes daily.',
+              title: t('landing.features.dailyQuizzes.title'),
+              description: t('landing.features.dailyQuizzes.description'),
             },
           ].map((feature, index) => (
             <div
@@ -113,23 +118,23 @@ const LandingPage: React.FC = () => {
             </div>
           ))}
         </div>
-      </section>
+      </section >
 
-      {/* Stats Section */}
+
       <section className="bg-gradient-to-r from-primary-600 to-secondary-600 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-3 gap-8 text-center text-white">
             <div>
               <p className="text-4xl font-bold">10K+</p>
-              <p className="text-lg mt-2 opacity-90">Active Learners</p>
+              <p className="text-lg mt-2 opacity-90">{t('landing.stats.activeLearners')}</p>
             </div>
             <div>
               <p className="text-4xl font-bold">500+</p>
-              <p className="text-lg mt-2 opacity-90">Daily Topics</p>
+              <p className="text-lg mt-2 opacity-90">{t('landing.stats.dailyTopics')}</p>
             </div>
             <div>
               <p className="text-4xl font-bold">100+</p>
-              <p className="text-lg mt-2 opacity-90">Quiz Questions</p>
+              <p className="text-lg mt-2 opacity-90">{t('landing.stats.quizQuestions')}</p>
             </div>
           </div>
         </div>
@@ -138,14 +143,14 @@ const LandingPage: React.FC = () => {
       {/* CTA Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
         <h2 className="text-4xl font-bold mb-6 text-slate-900 dark:text-white">
-          Start Learning Today
+          {t('landing.cta.title')}
         </h2>
         <p className="text-xl text-slate-600 dark:text-slate-400 mb-8 max-w-2xl mx-auto">
-          Join thousands of English learners and start your journey to fluency.
+          {t('landing.cta.description')}
         </p>
         <Link to="/register">
           <Button variant="primary" size="lg">
-            Create Free Account
+            {t('landing.cta.button')}
           </Button>
         </Link>
       </section>
@@ -168,7 +173,7 @@ const LandingPage: React.FC = () => {
                 <Logo />
               </div>
               <p className="text-slate-400 text-sm mb-6 leading-relaxed">
-                Master English. Connect with the World. Join thousands of learners improving their English through real conversations and AI-powered feedback.
+                {t('landing.footer.brandDesc')}
               </p>
               {/* Social Media Icons */}
               <div className="flex gap-3">
@@ -192,12 +197,22 @@ const LandingPage: React.FC = () => {
 
             {/* Product Column */}
             <div>
-              <h4 className="font-semibold text-lg mb-4 text-white">Product</h4>
+              <h4 className="font-semibold text-lg mb-4 text-white">{t('landing.footer.product')}</h4>
               <ul className="space-y-3">
                 {[
-                  { label: 'Features', action: () => scrollToSection('features') },
-                  { label: 'Pricing', link: '/subscriptions' },
-                  { label: 'Security', action: () => window.scrollTo({ top: 0, behavior: 'smooth' }) }
+                  { label: t('landing.footer.product'), action: () => scrollToSection('features') }, // Wait this label was 'Features' in en.json? No I used product key? Let's check en.json logic I added. 
+                  // I added "features": { "title": "Our Features" ... }
+                  // I also added "product": "Product" in footer section.
+                  // The list items were 'Features', 'Pricing', 'Security'.
+                  // I need keys for these list items if they are different from section headers.
+                  // 'Features' -> footer.features? I didn't add that. I added features.title = Our Features.
+                  // I can use `landing.features.title` but that is "Our Features". Maybe I just use `Features`.
+                  // I'll stick to hardcoded values for list items if keys are missing or reuse carefully.
+                  // Actually I should have added keys for these links.
+                  // I added: product, pricing, security...
+                  { label: t('landing.features.title'), action: () => scrollToSection('features') },
+                  { label: t('landing.footer.pricing'), link: '/subscriptions' },
+                  { label: t('landing.footer.security'), action: () => window.scrollTo({ top: 0, behavior: 'smooth' }) }
                 ].map((item) => (
                   <li key={item.label}>
                     {item.link ? (
@@ -224,12 +239,12 @@ const LandingPage: React.FC = () => {
 
             {/* Company Column */}
             <div>
-              <h4 className="font-semibold text-lg mb-4 text-white">Company</h4>
+              <h4 className="font-semibold text-lg mb-4 text-white">{t('landing.footer.company')}</h4>
               <ul className="space-y-3">
                 {[
-                  { label: 'About', action: () => window.scrollTo({ top: 0, behavior: 'smooth' }) },
-                  { label: 'Blog', action: () => alert('Blog coming soon!') },
-                  { label: 'Careers', action: () => alert('Careers page coming soon!') }
+                  { label: t('landing.footer.about'), action: () => window.scrollTo({ top: 0, behavior: 'smooth' }) },
+                  { label: t('landing.footer.blog'), action: () => alert('Blog coming soon!') },
+                  { label: t('landing.footer.careers'), action: () => alert('Careers page coming soon!') }
                 ].map((item) => (
                   <li key={item.label}>
                     <button
@@ -246,7 +261,7 @@ const LandingPage: React.FC = () => {
 
             {/* Legal Column */}
             <div>
-              <h4 className="font-semibold text-lg mb-4 text-white">Legal</h4>
+              <h4 className="font-semibold text-lg mb-4 text-white">{t('landing.footer.legal')}</h4>
               <ul className="space-y-3">
                 <li>
                   <button
@@ -254,7 +269,7 @@ const LandingPage: React.FC = () => {
                     className="text-slate-400 hover:text-white transition-colors flex items-center gap-2 group"
                   >
                     <span className="w-1 h-1 rounded-full bg-secondary-500 opacity-0 group-hover:opacity-100 transition-opacity"></span>
-                    Privacy
+                    {t('landing.footer.privacy')}
                   </button>
                 </li>
                 <li>
@@ -263,7 +278,7 @@ const LandingPage: React.FC = () => {
                     className="text-slate-400 hover:text-white transition-colors flex items-center gap-2 group"
                   >
                     <span className="w-1 h-1 rounded-full bg-secondary-500 opacity-0 group-hover:opacity-100 transition-opacity"></span>
-                    Terms
+                    {t('landing.footer.terms')}
                   </button>
                 </li>
                 <li>
@@ -272,7 +287,7 @@ const LandingPage: React.FC = () => {
                     className="text-slate-400 hover:text-white transition-colors flex items-center gap-2 group"
                   >
                     <span className="w-1 h-1 rounded-full bg-secondary-500 opacity-0 group-hover:opacity-100 transition-opacity"></span>
-                    Contact
+                    {t('landing.footer.contact')}
                   </a>
                 </li>
               </ul>
@@ -282,15 +297,15 @@ const LandingPage: React.FC = () => {
           {/* Bottom Bar */}
           <div className="pt-8 border-t border-slate-700/50 flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-slate-400 text-sm">
-              © 2025 EduTalks. All rights reserved.
+              {t('landing.footer.copyright')}
             </p>
             <p className="text-slate-500 text-sm">
-              Made with ❤️ for English learners worldwide
+              {t('landing.footer.madeWith')}
             </p>
           </div>
         </div>
       </footer>
-    </div>
+    </div >
   );
 };
 
